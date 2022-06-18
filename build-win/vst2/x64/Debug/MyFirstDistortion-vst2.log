@@ -1,0 +1,12 @@
+﻿cl : command line warning D9002: ignoring unknown option '/arch:SSE2'
+  MyFirstDistortion.cpp
+C:\wdl-ol\WDL\IPlug\IPlugStructs.h(239,11): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\wdl-ol\WDL\IPlug\IPlugStructs.h(241,37): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\wdl-ol\WDL\IPlug\IPlugStructs.h(247,11): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\wdl-ol\WDL\IPlug\IPlugStructs.h(249,34): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\wdl-ol\WDL\IPlug\IPlug_include_in_plug_src.h(60,67): warning C4312: 'type cast': conversion from 'int' to 'audioMasterCallback' of greater size
+C:\wdl-ol\WDL\IPlug\IPlug_include_in_plug_src.h(60,68): warning C4311: 'type cast': pointer truncation from 'void *' to 'int'
+C:\wdl-ol\WDL\IPlug\IPlug_include_in_plug_src.h(60,68): warning C4302: 'type cast': truncation from 'void *' to 'int'
+  Oscillator.cpp
+  Generating Code...
+  MyFirstDistortion-vst2.vcxproj -> C:\wdl-ol\IPlugExamples\ChSynth\build-win\vst2\x64\bin\MyFirstDistortion.dll
