@@ -7,18 +7,13 @@ const int kNumPrograms = 1;
 
 enum EParams
 {
-    kFrequency = 0,
-    kNumParams = 4
+    kNumParams
 };
 
 enum ELayout
 {
   kWidth = GUI_WIDTH,
-  kHeight = GUI_HEIGHT,
-
-  kFrequencyX = 100,
-  kFrequencyY = 100,
-  kKnobFrames = 60
+  kHeight = GUI_HEIGHT
 };
 
 MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
@@ -26,21 +21,9 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
 {
   TRACE;
 
-  //arguments are: name, defaultVal, minVal, maxVal, step, label
-  GetParam(kFrequency)->InitDouble("Frequency", 440.0, 50.0, 20000.0, 0.01, "Hz");
-  GetParam(kFrequency)->SetShape(2.0);
-
   IGraphics* pGraphics = MakeGraphics(this, kWidth, kHeight);
   pGraphics->AttachPanelBackground(&COLOR_RED);
-
-  IBitmap knob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, kKnobFrames);
-
-  pGraphics->AttachControl(new IKnobMultiControl(this, kFrequencyX, kFrequencyY, kFrequency, &knob));
-
   AttachGraphics(pGraphics);
-
-  //MakePreset("preset 1", ... );
-  //MakeDefaultPreset((char *) "-", kNumPrograms);
   CreatePresets();
 }
 
@@ -53,36 +36,38 @@ void MyFirstDistortion::ProcessDoubleReplacing(double** inputs, double** outputs
     double* leftOutput = outputs[0];
     double* rightOutput = outputs[1];
 
-    mOscillator.generate(leftOutput, nFrames);
-
-    // Copy left buffer into right buffer:
-    for (int s = 0; s < nFrames; ++s) {
-        rightOutput[s] = leftOutput[s];
+    for (int i = 0; i < nFrames; ++i) {
+        mMIDIReceiver.advance();
+        int velocity = mMIDIReceiver.getLastVelocity();
+        if (velocity > 0) {
+            mOscillator.setFrequency(mMIDIReceiver.getLastFrequency());
+            mOscillator.setMuted(false);
+        }
+        else {
+            mOscillator.setMuted(true);
+        }
+        leftOutput[i] = rightOutput[i] = mOscillator.nextSample() * velocity / 127.0;
     }
+
+    mMIDIReceiver.Flush(nFrames);
 }
 
 void MyFirstDistortion::Reset()
 {
-  TRACE;
-  IMutexLock lock(this);
-  mOscillator.setSampleRate(GetSampleRate());
+    TRACE;
+    IMutexLock lock(this);
+    mOscillator.setSampleRate(GetSampleRate());
 }
 
 void MyFirstDistortion::OnParamChange(int paramIdx)
 {
   IMutexLock lock(this);
-
-  switch (paramIdx)
-  {
-    case kFrequency:
-        mOscillator.setFrequency(GetParam(kFrequency)->Value());
-      break;
-
-    default:
-      break;
-  }
 }
 
 void MyFirstDistortion::CreatePresets() {
-    MakePreset("clean", 440.0);
+    MakeDefaultPreset((char*)"-", kNumPrograms);
+}
+
+void MyFirstDistortion::ProcessMidiMsg(IMidiMsg* pMsg) {
+    mMIDIReceiver.onMessageReceived(pMsg);
 }
