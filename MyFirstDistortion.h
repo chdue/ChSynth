@@ -20,6 +20,7 @@ public:
 
 private:
   double mFrequency;
+  double mGain;
   void CreatePresets();
   Oscillator mOscillator;
   MIDIReceiver mMIDIReceiver;

@@ -7,13 +7,18 @@ const int kNumPrograms = 1;
 
 enum EParams
 {
+    kGain = 0,
     kNumParams
 };
 
 enum ELayout
 {
   kWidth = GUI_WIDTH,
-  kHeight = GUI_HEIGHT
+  kHeight = GUI_HEIGHT,
+
+  kGainX = (kWidth - 48)/2,
+  kGainY = (kHeight - 48) / 2,
+  kKnobFrames = 60
 };
 
 MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
@@ -21,8 +26,16 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
 {
   TRACE;
 
+  GetParam(kGain)->InitDouble("Makeup Gain", 0, -10.0, 10.0, 0.01, "dBs");
+  GetParam(kGain)->SetShape(1.);
+
   IGraphics* pGraphics = MakeGraphics(this, kWidth, kHeight);
   pGraphics->AttachPanelBackground(&COLOR_RED);
+
+  IBitmap gKnob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, kKnobFrames); //will be changed when new resources are made
+
+  pGraphics->AttachControl(new IKnobMultiControl(this, kGainX, kGainY, kGain, &gKnob));
+  
   AttachGraphics(pGraphics);
   CreatePresets();
 }
@@ -46,7 +59,7 @@ void MyFirstDistortion::ProcessDoubleReplacing(double** inputs, double** outputs
         else {
             mOscillator.setMuted(true);
         }
-        leftOutput[i] = rightOutput[i] = mOscillator.nextSample() * velocity / 127.0;
+        leftOutput[i] = rightOutput[i] = mGain * mOscillator.nextSample() * velocity / 127.0;
     }
 
     mMIDIReceiver.Flush(nFrames);
@@ -62,6 +75,16 @@ void MyFirstDistortion::Reset()
 void MyFirstDistortion::OnParamChange(int paramIdx)
 {
   IMutexLock lock(this);
+
+  switch (paramIdx)
+  {
+    case kGain:
+      mGain = exp(GetParam(kGain)->Value() / 10); // 10 * log(ratio) = dB Change
+      break;
+
+    default:
+      break;
+  }
 }
 
 void MyFirstDistortion::CreatePresets() {
