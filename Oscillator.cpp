@@ -1,4 +1,5 @@
 #include "Oscillator.h"
+#include <stdlib.h>
 
 void Oscillator::setMode(OscillatorMode mode) {
     mOscillatorMode = mode;
@@ -63,6 +64,15 @@ void Oscillator::generate(double* buffer, int nFrames) {
             }
         }
         break;
+    case OSCILLATOR_MODE_RANDOM:
+        for (int i = 0; i < nFrames; i++) {
+            buffer[i] = rand() % 1 - 1; // random between (-1, 1)
+            mPhase += mPhaseIncrement;
+            while (mPhase >= twoPI) {
+                mPhase -= twoPI;
+            }
+        }
+        break;
     }
 }
 
@@ -88,6 +98,9 @@ double Oscillator::nextSample() {
     case OSCILLATOR_MODE_TRIANGLE:
         value = -1.0 + (2.0 * mPhase / twoPI);
         value = 2.0 * (fabs(value) - 0.5);
+        break;
+    case OSCILLATOR_MODE_RANDOM: // fix this
+        value = rand() % 1 - 1;
         break;
     }
     mPhase += mPhaseIncrement;

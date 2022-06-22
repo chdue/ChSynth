@@ -1,26 +1,6 @@
 ﻿cl : command line warning D9002: ignoring unknown option '/arch:SSE2'
-  IPlugVST.cpp
-C:\wdl-ol\WDL\IPlug\IPlugStructs.h(239,11): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\wdl-ol\WDL\IPlug\IPlugStructs.h(241,37): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\wdl-ol\WDL\IPlug\IPlugStructs.h(247,11): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\wdl-ol\WDL\IPlug\IPlugStructs.h(249,34): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\wdl-ol\WDL\IPlug\IPlugVST.cpp(202,18): warning C4244: 'initializing': conversion from 'VstIntPtr' to 'int', possible loss of data
-C:\wdl-ol\WDL\IPlug\IPlugVST.cpp(436,27): warning C4244: 'argument': conversion from 'VstIntPtr' to 'int', possible loss of data
-C:\wdl-ol\WDL\IPlug\IPlugVST.cpp(536,24): warning C4244: 'argument': conversion from 'VstIntPtr' to 'int', possible loss of data
-C:\wdl-ol\WDL\IPlug\IPlugVST.cpp(761,27): warning C4244: 'argument': conversion from 'VstIntPtr' to 'int', possible loss of data
-C:\wdl-ol\WDL\IPlug\IPlugVST.cpp(770,31): warning C4244: 'argument': conversion from 'VstIntPtr' to 'int', possible loss of data
-  MIDIReceiver.cpp
-C:\wdl-ol\IPlugExamples\ChSynth\MIDIReceiver.h(4,9): warning C4068: unknown pragma 'clang'
-C:\wdl-ol\IPlugExamples\ChSynth\MIDIReceiver.h(5,9): warning C4068: unknown pragma 'clang'
-C:\wdl-ol\IPlugExamples\ChSynth\resource.h(85,1): warning C4005: 'EFFECT_TYPE_VST3': macro redefinition
-C:\wdl-ol\IPlugExamples\ChSynth\resource.h(60): message : see previous definition of 'EFFECT_TYPE_VST3'
-C:\wdl-ol\WDL\IPlug\IPlugStructs.h(239,11): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\wdl-ol\WDL\IPlug\IPlugStructs.h(241,37): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\wdl-ol\WDL\IPlug\IPlugStructs.h(247,11): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\wdl-ol\WDL\IPlug\IPlugStructs.h(249,34): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\wdl-ol\IPlugExamples\ChSynth\MIDIReceiver.h(7,9): warning C4068: unknown pragma 'clang'
   MyFirstDistortion.cpp
-C:\wdl-ol\IPlugExamples\ChSynth\resource.h(85,1): warning C4005: 'EFFECT_TYPE_VST3': macro redefinition
+C:\wdl-ol\IPlugExamples\ChSynth\resource.h(89,1): warning C4005: 'EFFECT_TYPE_VST3': macro redefinition
 C:\wdl-ol\IPlugExamples\ChSynth\resource.h(60): message : see previous definition of 'EFFECT_TYPE_VST3'
 C:\wdl-ol\WDL\IPlug\IPlugStructs.h(239,11): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
 C:\wdl-ol\WDL\IPlug\IPlugStructs.h(241,37): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
@@ -33,12 +13,7 @@ C:\wdl-ol\WDL\IPlug\IPlug_include_in_plug_src.h(60,67): warning C4312: 'type cas
 C:\wdl-ol\WDL\IPlug\IPlug_include_in_plug_src.h(60,68): warning C4311: 'type cast': pointer truncation from 'void *' to 'int'
 C:\wdl-ol\WDL\IPlug\IPlug_include_in_plug_src.h(60,68): warning C4302: 'type cast': truncation from 'void *' to 'int'
 C:\wdl-ol\IPlugExamples\ChSynth\resource.h(60,1): warning C4005: 'EFFECT_TYPE_VST3': macro redefinition
-C:\wdl-ol\IPlugExamples\ChSynth\resource.h(85): message : see previous definition of 'EFFECT_TYPE_VST3'
-C:\wdl-ol\IPlugExamples\ChSynth\resource.h(85,1): warning C4005: 'EFFECT_TYPE_VST3': macro redefinition
+C:\wdl-ol\IPlugExamples\ChSynth\resource.h(89): message : see previous definition of 'EFFECT_TYPE_VST3'
+C:\wdl-ol\IPlugExamples\ChSynth\resource.h(89,1): warning C4005: 'EFFECT_TYPE_VST3': macro redefinition
 C:\wdl-ol\IPlugExamples\ChSynth\resource.h(60): message : see previous definition of 'EFFECT_TYPE_VST3'
-  Oscillator.cpp
-  Generating Code...
-resource.h(85): warning RC4005: 'EFFECT_TYPE_VST3' : redefinition
-  
-     Creating library build-win\vst2\x64\bin\MyFirstDistortion.lib and object build-win\vst2\x64\bin\MyFirstDistortion.exp
   MyFirstDistortion-vst2.vcxproj -> C:\wdl-ol\IPlugExamples\ChSynth\build-win\vst2\x64\bin\MyFirstDistortion.dll
