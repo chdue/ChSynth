@@ -31,7 +31,7 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
 {
   TRACE;
 
-  GetParam(kGain)->InitDouble("Makeup Gain", 0, -10.0, 10.0, 0.01, "dBs");
+  GetParam(kGain)->InitDouble("Makeup Gain", 0, -23.0, 23.0, 0.01, "dBs");
   GetParam(kGain)->SetShape(1.);
 
   GetParam(sSwitch)->InitDouble("Waveform", 0.0, 0.0, 4.0, 1.0, "Type");

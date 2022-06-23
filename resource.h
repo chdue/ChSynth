@@ -72,7 +72,7 @@ instrument determined by PLUG _IS _INST
 // Image resource locations for this plug.
 #define KNOB_FN "resources/img/knob.png"
 #define sKNOB_FN "resources/img/SynthSwitchKnob.png"
-#define BACKGROUND_FN "resources/img/SynthBG.png"
+#define BACKGROUND_FN "resources/img/synthBGlabels.png"
 
 // GUI default dimensions
 #define GUI_WIDTH 338
