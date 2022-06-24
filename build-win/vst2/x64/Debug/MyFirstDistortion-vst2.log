@@ -1,14 +1,4 @@
 ﻿cl : command line warning D9002: ignoring unknown option '/arch:SSE2'
-  MIDIReceiver.cpp
-C:\wdl-ol\IPlugExamples\ChSynth\MIDIReceiver.h(4,9): warning C4068: unknown pragma 'clang'
-C:\wdl-ol\IPlugExamples\ChSynth\MIDIReceiver.h(5,9): warning C4068: unknown pragma 'clang'
-C:\wdl-ol\IPlugExamples\ChSynth\resource.h(89,1): warning C4005: 'EFFECT_TYPE_VST3': macro redefinition
-C:\wdl-ol\IPlugExamples\ChSynth\resource.h(60): message : see previous definition of 'EFFECT_TYPE_VST3'
-C:\wdl-ol\WDL\IPlug\IPlugStructs.h(239,11): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\wdl-ol\WDL\IPlug\IPlugStructs.h(241,37): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\wdl-ol\WDL\IPlug\IPlugStructs.h(247,11): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\wdl-ol\WDL\IPlug\IPlugStructs.h(249,34): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\wdl-ol\IPlugExamples\ChSynth\MIDIReceiver.h(7,9): warning C4068: unknown pragma 'clang'
   MyFirstDistortion.cpp
 C:\wdl-ol\IPlugExamples\ChSynth\resource.h(89,1): warning C4005: 'EFFECT_TYPE_VST3': macro redefinition
 C:\wdl-ol\IPlugExamples\ChSynth\resource.h(60): message : see previous definition of 'EFFECT_TYPE_VST3'
@@ -26,7 +16,9 @@ C:\wdl-ol\IPlugExamples\ChSynth\resource.h(60,1): warning C4005: 'EFFECT_TYPE_VS
 C:\wdl-ol\IPlugExamples\ChSynth\resource.h(89): message : see previous definition of 'EFFECT_TYPE_VST3'
 C:\wdl-ol\IPlugExamples\ChSynth\resource.h(89,1): warning C4005: 'EFFECT_TYPE_VST3': macro redefinition
 C:\wdl-ol\IPlugExamples\ChSynth\resource.h(60): message : see previous definition of 'EFFECT_TYPE_VST3'
+C:\wdl-ol\IPlugExamples\ChSynth\MyFirstDistortion.cpp(37,52): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\wdl-ol\IPlugExamples\ChSynth\MyFirstDistortion.cpp(37,47): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\wdl-ol\IPlugExamples\ChSynth\MyFirstDistortion.cpp(37,42): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+  Oscillator.cpp
   Generating Code...
-resource.h(89): warning RC4005: 'EFFECT_TYPE_VST3' : redefinition
-  
   MyFirstDistortion-vst2.vcxproj -> C:\wdl-ol\IPlugExamples\ChSynth\build-win\vst2\x64\bin\MyFirstDistortion.dll

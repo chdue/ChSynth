@@ -34,15 +34,15 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
   GetParam(kGain)->InitDouble("Makeup Gain", 0, -23.0, 23.0, 0.01, "dBs");
   GetParam(kGain)->SetShape(1.);
 
-  GetParam(sSwitch)->InitDouble("Waveform", 0.0, 0.0, 4.0, 1.0, "Type");
+  GetParam(sSwitch)->InitInt("Waveform", 0.0, 0.0, 4.0,  "Type");
   GetParam(sSwitch)->SetShape(1.);
 
   IGraphics* pGraphics = MakeGraphics(this, kWidth, kHeight);
   //pGraphics->AttachPanelBackground(&COLOR_RED);
   pGraphics->AttachBackground(BACKGROUND_ID, BACKGROUND_FN);
 
-  IBitmap gKnob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, kKnobFrames); //will be changed when new resources are made
-  IBitmap knob = pGraphics->LoadIBitmap(sKNOB_ID, sKNOB_FN, sSwitchFrames); //will be changed when new resources are made
+  IBitmap gKnob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, kKnobFrames);
+  IBitmap knob = pGraphics->LoadIBitmap(sKNOB_ID, sKNOB_FN, sSwitchFrames);
 
   pGraphics->AttachControl(new IKnobMultiControl(this, kGainX, kGainY, kGain, &gKnob));
   pGraphics->AttachControl(new IKnobMultiControl(this, sSwitchX, sSwitchY, sSwitch, &knob));
@@ -94,19 +94,19 @@ void MyFirstDistortion::OnParamChange(int paramIdx)
       break;
 
     case sSwitch:
-        if (GetParam(sSwitch)->Value() <= 0.5) {
+        if (GetParam(sSwitch)->Value() == 0) {
             mOscillator.setMode(OSCILLATOR_MODE_SINE);
         }
-        else if (GetParam(sSwitch)->Value() > 0.5 && GetParam(sSwitch)->Value() <= 1.5) { //using bounds because the steps aren't "really" discrete
+        else if (GetParam(sSwitch)->Value() ==1) { //using bounds because the steps aren't "really" discrete
             mOscillator.setMode(OSCILLATOR_MODE_SAW);
         }
-        else if (GetParam(sSwitch)->Value() > 1.5 && GetParam(sSwitch)->Value() <= 2.5) {
+        else if (GetParam(sSwitch)->Value() ==2) {
             mOscillator.setMode(OSCILLATOR_MODE_SQUARE);
         }
-        else if (GetParam(sSwitch)->Value() > 2.5 && GetParam(sSwitch)->Value() <= 3.5) {
+        else if (GetParam(sSwitch)->Value() ==3) {
             mOscillator.setMode(OSCILLATOR_MODE_TRIANGLE);
         }
-        else if (GetParam(sSwitch)->Value() > 3.5 && GetParam(sSwitch)->Value() <= 4.5) {
+        else if (GetParam(sSwitch)->Value()  ==4) {
             mOscillator.setMode(OSCILLATOR_MODE_RANDOM);
         }
         break;
