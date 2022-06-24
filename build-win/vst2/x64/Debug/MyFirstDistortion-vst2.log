@@ -19,6 +19,4 @@ C:\wdl-ol\IPlugExamples\ChSynth\resource.h(60): message : see previous definitio
 C:\wdl-ol\IPlugExamples\ChSynth\MyFirstDistortion.cpp(37,52): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
 C:\wdl-ol\IPlugExamples\ChSynth\MyFirstDistortion.cpp(37,47): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
 C:\wdl-ol\IPlugExamples\ChSynth\MyFirstDistortion.cpp(37,42): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-  Oscillator.cpp
-  Generating Code...
   MyFirstDistortion-vst2.vcxproj -> C:\wdl-ol\IPlugExamples\ChSynth\build-win\vst2\x64\bin\MyFirstDistortion.dll

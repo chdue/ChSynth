@@ -1,5 +1,11 @@
 #include "Oscillator.h"
 #include <stdlib.h>
+#include <time.h>
+
+#define _USE_MATH_DEFINES
+#include <math.h>
+
+using namespace std;
 
 void Oscillator::setMode(OscillatorMode mode) {
     mOscillatorMode = mode;
@@ -66,21 +72,28 @@ void Oscillator::generate(double* buffer, int nFrames) {
         break;
     case OSCILLATOR_MODE_RANDOM:
         for (int i = 0; i < nFrames; i++) {
-            buffer[i] = rand() % 1 - 1; // random between (-1, 1) TODO
+            srand(time(0));
+            buffer[i] = rand() % 200 - 100; // random between (-1, 1) TODO
+            buffer[i] /= 100;
             mPhase += mPhaseIncrement;
             while (mPhase >= twoPI) {
                 mPhase -= twoPI;
             }
         }
         break;
-    case OSCILLATOR_MODE_ROUNDED_SQUARE: // TODO
+    case OSCILLATOR_MODE_ROUNDED_SQUARE:
         for (int i = 0; i < nFrames; i++) {
-            if (mPhase <= mPI) {
+            // 0 < mPI < twoPI
+            if (mPhase >= (mPI * 1.1) && mPhase <= (mPI * 1.9)) {
                 buffer[i] = 1.0;
             }
-            else {
+            else if (mPhase >= (mPI * 0.1) && mPhase <= (mPI * 0.9)) {
                 buffer[i] = -1.0;
             }
+            else {
+                buffer[i] = sin(-5 * M_PI * mPhase);
+            }
+
             mPhase += mPhaseIncrement;
             while (mPhase >= twoPI) {
                 mPhase -= twoPI;
@@ -114,14 +127,19 @@ double Oscillator::nextSample() {
         value = 2.0 * (fabs(value) - 0.5);
         break;
     case OSCILLATOR_MODE_RANDOM: // fix this TODO
-        value = rand() % 1 - 1;
+        srand(time(0));
+        value = rand() % 200 - 100;
+        value /= 100;
         break;
-    case OSCILLATOR_MODE_ROUNDED_SQUARE: // TODO
-        if (mPhase <= mPI) {
+    case OSCILLATOR_MODE_ROUNDED_SQUARE:
+        if (mPhase >= (mPI * 1.1) && mPhase <= (mPI * 1.9)) {
             value = 1.0;
         }
-        else {
+        else if (mPhase >= (mPI * 0.1) && mPhase <= (mPI * 0.9)) {
             value = -1.0;
+        }
+        else {
+            value = sin(-5 * M_PI * mPhase);
         }
         break;
     }

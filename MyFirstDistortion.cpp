@@ -97,16 +97,16 @@ void MyFirstDistortion::OnParamChange(int paramIdx)
         if (GetParam(sSwitch)->Value() == 0) {
             mOscillator.setMode(OSCILLATOR_MODE_SINE);
         }
-        else if (GetParam(sSwitch)->Value() ==1) { //using bounds because the steps aren't "really" discrete
+        else if (GetParam(sSwitch)->Value() == 1) {
             mOscillator.setMode(OSCILLATOR_MODE_SAW);
         }
-        else if (GetParam(sSwitch)->Value() ==2) {
+        else if (GetParam(sSwitch)->Value() == 2) {
             mOscillator.setMode(OSCILLATOR_MODE_SQUARE);
         }
-        else if (GetParam(sSwitch)->Value() ==3) {
+        else if (GetParam(sSwitch)->Value() == 3) {
             mOscillator.setMode(OSCILLATOR_MODE_TRIANGLE);
         }
-        else if (GetParam(sSwitch)->Value()  ==4) {
+        else if (GetParam(sSwitch)->Value()  == 4) {
             mOscillator.setMode(OSCILLATOR_MODE_RANDOM);
         }
         break;
