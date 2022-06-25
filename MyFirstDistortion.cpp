@@ -19,7 +19,7 @@ enum ELayout
 
   sSwitchX = (kWidth - 64) / 2,
   sSwitchY = (kHeight - 64) / 2,
-  sSwitchFrames = 5, // add 1 more later
+  sSwitchFrames = 6,
 
   kGainX = sSwitchX + 100,
   kGainY = sSwitchY + 100,
@@ -34,7 +34,7 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
   GetParam(kGain)->InitDouble("Makeup Gain", 0, -23.0, 23.0, 0.01, "dBs");
   GetParam(kGain)->SetShape(1.);
 
-  GetParam(sSwitch)->InitInt("Waveform", 0.0, 0.0, 4.0,  "Type");
+  GetParam(sSwitch)->InitInt("Waveform", 0.0, 0.0, 5.0,  "Type");
   GetParam(sSwitch)->SetShape(1.);
 
   IGraphics* pGraphics = MakeGraphics(this, kWidth, kHeight);
@@ -101,12 +101,15 @@ void MyFirstDistortion::OnParamChange(int paramIdx)
             mOscillator.setMode(OSCILLATOR_MODE_SAW);
         }
         else if (GetParam(sSwitch)->Value() == 2) {
-            mOscillator.setMode(OSCILLATOR_MODE_SQUARE);
-        }
-        else if (GetParam(sSwitch)->Value() == 3) {
             mOscillator.setMode(OSCILLATOR_MODE_TRIANGLE);
         }
-        else if (GetParam(sSwitch)->Value()  == 4) {
+        else if (GetParam(sSwitch)->Value() == 3) {
+            mOscillator.setMode(OSCILLATOR_MODE_SQUARE);
+        }
+        else if (GetParam(sSwitch)->Value() == 4) {
+            mOscillator.setMode(OSCILLATOR_MODE_ROUNDED_SQUARE);
+        }
+        else if (GetParam(sSwitch)->Value()  == 5) {
             mOscillator.setMode(OSCILLATOR_MODE_RANDOM);
         }
         break;
