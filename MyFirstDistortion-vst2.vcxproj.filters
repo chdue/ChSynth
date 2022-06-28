@@ -7,6 +7,7 @@
     </ClCompile>
     <ClCompile Include="Oscillator.cpp" />
     <ClCompile Include="MIDIReceiver.cpp" />
+    <ClCompile Include="EnvelopeGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyFirstDistortion.h" />
@@ -16,6 +17,7 @@
     </ClInclude>
     <ClInclude Include="Oscillator.h" />
     <ClInclude Include="MIDIReceiver.h" />
+    <ClInclude Include="EnvelopeGenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MyFirstDistortion.rc" />

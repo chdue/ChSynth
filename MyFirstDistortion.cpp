@@ -70,7 +70,14 @@ void MyFirstDistortion::ProcessDoubleReplacing(double** inputs, double** outputs
         else {
             mOscillator.setMuted(true);
         }
-        leftOutput[i] = rightOutput[i] = mGain * mOscillator.nextSample() * velocity / 127.0;
+        // leftOutput[i] = rightOutput[i] = mGain * mOscillator.nextSample() * velocity / 127.0;
+        if (mEnvelopeGenerator.getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF) {
+            mEnvelopeGenerator.enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
+        }
+        if (mEnvelopeGenerator.getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_SUSTAIN) {
+            mEnvelopeGenerator.enterStage(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE);
+        }
+        leftOutput[i] = rightOutput[i] = mGain * mOscillator.nextSample() * mEnvelopeGenerator.nextSample() * velocity / 127.0;
     }
 
     mMIDIReceiver.Flush(nFrames);
@@ -81,6 +88,7 @@ void MyFirstDistortion::Reset()
     TRACE;
     IMutexLock lock(this);
     mOscillator.setSampleRate(GetSampleRate());
+    mEnvelopeGenerator.setSampleRate(GetSampleRate());
 }
 
 void MyFirstDistortion::OnParamChange(int paramIdx)
