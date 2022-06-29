@@ -72,7 +72,7 @@ void Oscillator::generate(double* buffer, int nFrames) {
         break;
     case OSCILLATOR_MODE_RANDOM:
         for (int i = 0; i < nFrames; i++) {
-            srand(time(0));
+            srand(time(NULL) * mPhase);
             buffer[i] = rand() % 200 - 100; // random between (-1, 1) TODO
             buffer[i] /= 100;
             mPhase += mPhaseIncrement;
@@ -127,9 +127,10 @@ double Oscillator::nextSample() {
         value = 2.0 * (fabs(value) - 0.5);
         break;
     case OSCILLATOR_MODE_RANDOM: // fix this TODO
-        srand(time(0));
-        value = rand() % 200 - 100;
-        value /= 100;
+        srand(time(NULL) * mPhase);
+        value = static_cast <float> (rand() % 201 + (-100));
+        value /= 100.0;
+
         break;
     case OSCILLATOR_MODE_ROUNDED_SQUARE:
         if (mPhase >= (mPI * 1.1) && mPhase <= (mPI * 1.9)) {
