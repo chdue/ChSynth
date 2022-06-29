@@ -28,7 +28,7 @@ public:
         currentSampleIndex(0),
         nextStageSampleIndex(0) {
         stageValue[ENVELOPE_STAGE_OFF] = 0.0;
-        stageValue[ENVELOPE_STAGE_ATTACK] = 0.01;
+        stageValue[ENVELOPE_STAGE_ATTACK] = 0.05;
         stageValue[ENVELOPE_STAGE_DECAY] = 0.5;
         stageValue[ENVELOPE_STAGE_SUSTAIN] = 0.1;
         stageValue[ENVELOPE_STAGE_RELEASE] = 1.0;

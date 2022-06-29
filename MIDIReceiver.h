@@ -7,6 +7,8 @@
 #pragma clang diagnostic pop
 
 #include "IMidiQueue.h"
+#include "GallantSignal.h"
+using Gallant::Signal2;
 
 class MIDIReceiver {
 private:
@@ -44,6 +46,9 @@ public:
     void onMessageReceived(IMidiMsg* midiMessage);
     inline void Flush(int nFrames) { mMidiQueue.Flush(nFrames); mOffset = 0; }
     inline void Resize(int blockSize) { mMidiQueue.Resize(blockSize); }
+
+    Signal2< int, int > noteOn;
+    Signal2< int, int > noteOff;
 };
 
 #endif

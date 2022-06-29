@@ -49,6 +49,9 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
   
   AttachGraphics(pGraphics);
   CreatePresets();
+
+  mMIDIReceiver.noteOn.Connect(this, &MyFirstDistortion::onNoteOn);
+  mMIDIReceiver.noteOff.Connect(this, &MyFirstDistortion::onNoteOff);
 }
 
 MyFirstDistortion::~MyFirstDistortion() {}
@@ -71,12 +74,6 @@ void MyFirstDistortion::ProcessDoubleReplacing(double** inputs, double** outputs
             mOscillator.setMuted(true);
         }
         // leftOutput[i] = rightOutput[i] = mGain * mOscillator.nextSample() * velocity / 127.0;
-        if (mEnvelopeGenerator.getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF) {
-            mEnvelopeGenerator.enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
-        }
-        if (mEnvelopeGenerator.getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_SUSTAIN) {
-            mEnvelopeGenerator.enterStage(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE);
-        }
         leftOutput[i] = rightOutput[i] = mGain * mOscillator.nextSample() * mEnvelopeGenerator.nextSample() * velocity / 127.0;
     }
 
