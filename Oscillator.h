@@ -22,6 +22,7 @@ private:
     double mPhase;
     double mSampleRate;
     double mPhaseIncrement;
+    double randomize = 0;
     void updateIncrement();
 public:
     void setMode(OscillatorMode mode);

@@ -1,22 +1,5 @@
 ﻿cl : command line warning D9002: ignoring unknown option '/arch:SSE2'
-  MyFirstDistortion.cpp
-C:\wdl-ol\IPlugExamples\ChSynth\resource.h(93,1): warning C4005: 'EFFECT_TYPE_VST3': macro redefinition
-C:\wdl-ol\IPlugExamples\ChSynth\resource.h(60): message : see previous definition of 'EFFECT_TYPE_VST3'
-C:\wdl-ol\WDL\IPlug\IPlugStructs.h(239,11): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\wdl-ol\WDL\IPlug\IPlugStructs.h(241,37): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\wdl-ol\WDL\IPlug\IPlugStructs.h(247,11): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\wdl-ol\WDL\IPlug\IPlugStructs.h(249,34): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\wdl-ol\IPlugExamples\ChSynth\MIDIReceiver.h(4,9): warning C4068: unknown pragma 'clang'
-C:\wdl-ol\IPlugExamples\ChSynth\MIDIReceiver.h(5,9): warning C4068: unknown pragma 'clang'
-C:\wdl-ol\IPlugExamples\ChSynth\MIDIReceiver.h(7,9): warning C4068: unknown pragma 'clang'
-C:\wdl-ol\WDL\IPlug\IPlug_include_in_plug_src.h(60,67): warning C4312: 'type cast': conversion from 'int' to 'audioMasterCallback' of greater size
-C:\wdl-ol\WDL\IPlug\IPlug_include_in_plug_src.h(60,68): warning C4311: 'type cast': pointer truncation from 'void *' to 'int'
-C:\wdl-ol\WDL\IPlug\IPlug_include_in_plug_src.h(60,68): warning C4302: 'type cast': truncation from 'void *' to 'int'
-C:\wdl-ol\IPlugExamples\ChSynth\resource.h(60,1): warning C4005: 'EFFECT_TYPE_VST3': macro redefinition
-C:\wdl-ol\IPlugExamples\ChSynth\resource.h(93): message : see previous definition of 'EFFECT_TYPE_VST3'
-C:\wdl-ol\IPlugExamples\ChSynth\resource.h(93,1): warning C4005: 'EFFECT_TYPE_VST3': macro redefinition
-C:\wdl-ol\IPlugExamples\ChSynth\resource.h(60): message : see previous definition of 'EFFECT_TYPE_VST3'
-C:\wdl-ol\IPlugExamples\ChSynth\MyFirstDistortion.cpp(42,52): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\wdl-ol\IPlugExamples\ChSynth\MyFirstDistortion.cpp(42,47): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\wdl-ol\IPlugExamples\ChSynth\MyFirstDistortion.cpp(42,42): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+  Oscillator.cpp
+C:\wdl-ol\IPlugExamples\ChSynth\Oscillator.cpp(76,19): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
+C:\wdl-ol\IPlugExamples\ChSynth\Oscillator.cpp(134,15): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
   MyFirstDistortion-vst2.vcxproj -> C:\wdl-ol\IPlugExamples\ChSynth\build-win\vst2\x64\bin\MyFirstDistortion.dll
