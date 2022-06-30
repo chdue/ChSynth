@@ -19,6 +19,8 @@ public:
     inline EnvelopeStage getCurrentStage() const { return currentStage; };
     const double minimumLevel;
 
+    void setStageValue(EnvelopeStage stage, double value);
+
     EnvelopeGenerator() :
         minimumLevel(0.0001),
         currentStage(ENVELOPE_STAGE_OFF),

@@ -10,6 +10,10 @@ enum EParams
 {
     kGain = 0,
     sSwitch = 1,
+    mAttack = 2,
+    mDecay = 3,
+    mSustain = 4,
+    mRelease = 5,
     kNumParams
 };
 
@@ -26,8 +30,13 @@ enum ELayout
   kGainY = sSwitchY + 100,
   kKnobFrames = 60,
 
-  kKeybX = 1, //+ 84, // moving the keys up an octave in relation to c5
-  kKeybY = kHeight - 64
+  kKeybX = 1,
+  kKeybY = kHeight - 64,
+
+  adsrKnobXl = 90 - 48,
+  adsrKnobXr = kWidth - 90,
+  adsrKnobYu = 20,
+  adsrKnobYd = 120
 };
 
 MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
@@ -58,6 +67,26 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
 
   pGraphics->AttachControl(new IKnobMultiControl(this, kGainX, kGainY, kGain, &gKnob));
   pGraphics->AttachControl(new IKnobMultiControl(this, sSwitchX, sSwitchY, sSwitch, &knob));
+
+
+  // Knob bitmap for ADSR
+  // Attack knob:
+  GetParam(mAttack)->InitDouble("Attack", 0.05, 0.01, 10.0, 0.001);
+  GetParam(mAttack)->SetShape(3);
+  pGraphics->AttachControl(new IKnobMultiControl(this, adsrKnobXl, adsrKnobYu, mAttack, &gKnob));
+  // Decay knob:
+  GetParam(mDecay)->InitDouble("Decay", 0.5, 0.01, 15.0, 0.001);
+  GetParam(mDecay)->SetShape(3);
+  pGraphics->AttachControl(new IKnobMultiControl(this, adsrKnobXl, adsrKnobYd, mDecay, &gKnob));
+  // Sustain knob:
+  GetParam(mSustain)->InitDouble("Sustain", 0.1, 0.001, 1.0, 0.001);
+  GetParam(mSustain)->SetShape(2);
+  pGraphics->AttachControl(new IKnobMultiControl(this, adsrKnobXr, adsrKnobYu, mSustain, &gKnob));
+  // Release knob:
+  GetParam(mRelease)->InitDouble("Release", 1.0, 0.001, 15.0, 0.001);
+  GetParam(mRelease)->SetShape(3);
+  pGraphics->AttachControl(new IKnobMultiControl(this, adsrKnobXr, adsrKnobYd, mRelease, &gKnob));
+
   
   AttachGraphics(pGraphics);
   //CreatePresets();
@@ -131,6 +160,13 @@ void MyFirstDistortion::OnParamChange(int paramIdx)
         else if (GetParam(sSwitch)->Value()  == 5) {
             mOscillator.setMode(OSCILLATOR_MODE_RANDOM);
         }
+        break;
+
+    case mAttack: //2
+    case mDecay: //3
+    case mSustain: //4
+    case mRelease: //5
+        mEnvelopeGenerator.setStageValue(static_cast<EnvelopeGenerator::EnvelopeStage>(paramIdx), GetParam(paramIdx)->Value());
         break;
 
 
