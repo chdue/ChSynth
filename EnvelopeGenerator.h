@@ -2,6 +2,8 @@
 #define __ENVELOPEGENERATOR__
 
 #include <cmath>
+#include "GallantSignal.h"
+using Gallant::Signal0;
 
 class EnvelopeGenerator {
 public:
@@ -20,6 +22,9 @@ public:
     const double minimumLevel;
 
     void setStageValue(EnvelopeStage stage, double value);
+
+    Signal0<> beganEnvelopeCycle;
+    Signal0<> finishedEnvelopeCycle;
 
     EnvelopeGenerator() :
         minimumLevel(0.0001),

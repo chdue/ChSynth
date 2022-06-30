@@ -40,6 +40,9 @@ private:
 
   IControl* mVirtualKeyboard;
   void processVirtualKeyboard();
+
+  inline void onBeganEnvelopeCycle() { mOscillator.setMuted(false); }
+  inline void onFinishedEnvelopeCycle() { mOscillator.setMuted(true); }
 };
 
 #endif

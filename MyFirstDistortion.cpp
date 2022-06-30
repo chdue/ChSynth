@@ -93,6 +93,9 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
 
   mMIDIReceiver.noteOn.Connect(this, &MyFirstDistortion::onNoteOn);
   mMIDIReceiver.noteOff.Connect(this, &MyFirstDistortion::onNoteOff);
+
+  mEnvelopeGenerator.beganEnvelopeCycle.Connect(this, &MyFirstDistortion::onBeganEnvelopeCycle);
+  mEnvelopeGenerator.finishedEnvelopeCycle.Connect(this, &MyFirstDistortion::onFinishedEnvelopeCycle);
 }
 
 MyFirstDistortion::~MyFirstDistortion() {}
@@ -109,15 +112,8 @@ void MyFirstDistortion::ProcessDoubleReplacing(double** inputs, double** outputs
     for (int i = 0; i < nFrames; ++i) {
         mMIDIReceiver.advance();
         int velocity = mMIDIReceiver.getLastVelocity();
-        if (velocity > 0) {
-            mOscillator.setFrequency(mMIDIReceiver.getLastFrequency());
-            mOscillator.setMuted(false);
-        }
-        else {
-            mOscillator.setMuted(true);
-        }
-        // leftOutput[i] = rightOutput[i] = mGain * mOscillator.nextSample() * velocity / 127.0;
-        leftOutput[i] = rightOutput[i] = mGain * mOscillator.nextSample() * mEnvelopeGenerator.nextSample() * velocity / 127.0;
+        mOscillator.setFrequency(mMIDIReceiver.getLastFrequency());
+        leftOutput[i] = rightOutput[i] = mOscillator.nextSample() * mEnvelopeGenerator.nextSample() * velocity / 127.0;
     }
 
     mMIDIReceiver.Flush(nFrames);

@@ -22,6 +22,14 @@ void EnvelopeGenerator::calculateMultiplier(double startLevel,
 }
 
 void EnvelopeGenerator::enterStage(EnvelopeStage newStage) {
+    if (currentStage == newStage) return;
+    if (currentStage == ENVELOPE_STAGE_OFF) {
+        beganEnvelopeCycle();
+    }
+    if (newStage == ENVELOPE_STAGE_OFF) {
+        finishedEnvelopeCycle();
+    }
+
     currentStage = newStage;
     currentSampleIndex = 0;
     if (currentStage == ENVELOPE_STAGE_OFF ||
