@@ -3,6 +3,8 @@
 KNOB_ID       PNG KNOB_FN
 sKNOB_ID      PNG sKNOB_FN
 BACKGROUND_ID PNG BACKGROUND_FN
+KEYW_ID       PNG KEYW_FN
+KEYB_ID       PNG KEYB_FN
 
 #ifdef SA_API
 //Standalone stuff

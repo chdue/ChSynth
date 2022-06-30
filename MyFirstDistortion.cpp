@@ -1,6 +1,7 @@
 #include "MyFirstDistortion.h"
 #include "IPlug_include_in_plug_src.h"
 #include "IControl.h"
+#include "IKeyboardControl.h"
 #include "resource.h"
 
 const int kNumPrograms = 1;
@@ -17,17 +18,21 @@ enum ELayout
   kWidth = GUI_WIDTH,
   kHeight = GUI_HEIGHT,
 
-  sSwitchX = (kWidth - 64) / 2,
-  sSwitchY = (kHeight - 64) / 2,
+  sSwitchX = (kWidth - 64) / 2,     // - 64 because the knob width/height is 64
+  sSwitchY = (kHeight - 64 - 64) / 2,    // another -64 because the keyboard height is 64
   sSwitchFrames = 6,
 
   kGainX = sSwitchX + 100,
   kGainY = sSwitchY + 100,
-  kKnobFrames = 60
+  kKnobFrames = 60,
+
+  kKeybX = 1, //+ 84, // moving the keys up an octave in relation to c5
+  kKeybY = kHeight - 64
 };
 
 MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
-  :	IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), mFrequency(1.)
+  :	IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), mFrequency(1.),
+    lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1)
 {
   TRACE;
 
@@ -44,11 +49,18 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
   IBitmap gKnob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, kKnobFrames);
   IBitmap knob = pGraphics->LoadIBitmap(sKNOB_ID, sKNOB_FN, sSwitchFrames);
 
+  IBitmap whiteKeyImage = pGraphics->LoadIBitmap(KEYW_ID, KEYW_FN, 6); // 6 frames
+  IBitmap blackKeyImage = pGraphics->LoadIBitmap(KEYB_ID, KEYB_FN);
+  //                            C#     D#          F#      G#      A#
+  int keyCoordinates[12] = { 0, 7, 12, 20, 24, 36, 43, 48, 56, 60, 69, 72 };
+  mVirtualKeyboard = new IKeyboardControl(this, kKeybX, kKeybY, virtualKeyboardMinimumNoteNumber, /* octaves: */ 5, &whiteKeyImage, &blackKeyImage, keyCoordinates);
+  pGraphics->AttachControl(mVirtualKeyboard);
+
   pGraphics->AttachControl(new IKnobMultiControl(this, kGainX, kGainY, kGain, &gKnob));
   pGraphics->AttachControl(new IKnobMultiControl(this, sSwitchX, sSwitchY, sSwitch, &knob));
   
   AttachGraphics(pGraphics);
-  CreatePresets();
+  //CreatePresets();
 
   mMIDIReceiver.noteOn.Connect(this, &MyFirstDistortion::onNoteOn);
   mMIDIReceiver.noteOff.Connect(this, &MyFirstDistortion::onNoteOff);
@@ -62,6 +74,8 @@ void MyFirstDistortion::ProcessDoubleReplacing(double** inputs, double** outputs
 
     double* leftOutput = outputs[0];
     double* rightOutput = outputs[1];
+
+    processVirtualKeyboard();
 
     for (int i = 0; i < nFrames; ++i) {
         mMIDIReceiver.advance();
@@ -125,10 +139,34 @@ void MyFirstDistortion::OnParamChange(int paramIdx)
   }
 }
 
+/*
 void MyFirstDistortion::CreatePresets() {
     MakeDefaultPreset((char*)"-", kNumPrograms);
 }
+*/
 
 void MyFirstDistortion::ProcessMidiMsg(IMidiMsg* pMsg) {
     mMIDIReceiver.onMessageReceived(pMsg);
+    mVirtualKeyboard->SetDirty();
+}
+
+void MyFirstDistortion::processVirtualKeyboard() {
+    IKeyboardControl* virtualKeyboard = (IKeyboardControl*)mVirtualKeyboard;
+    int virtualKeyboardNoteNumber = virtualKeyboard->GetKey() + virtualKeyboardMinimumNoteNumber;
+
+    if (lastVirtualKeyboardNoteNumber >= virtualKeyboardMinimumNoteNumber && virtualKeyboardNoteNumber != lastVirtualKeyboardNoteNumber) {
+        // The note number has changed from a valid key to something else (valid key or nothing). Release the valid key:
+        IMidiMsg midiMessage;
+        midiMessage.MakeNoteOffMsg(lastVirtualKeyboardNoteNumber, 0);
+        mMIDIReceiver.onMessageReceived(&midiMessage);
+    }
+
+    if (virtualKeyboardNoteNumber >= virtualKeyboardMinimumNoteNumber && virtualKeyboardNoteNumber != lastVirtualKeyboardNoteNumber) {
+        // A valid key is pressed that wasn't pressed the previous call. Send a "note on" message to the MIDI receiver:
+        IMidiMsg midiMessage;
+        midiMessage.MakeNoteOnMsg(virtualKeyboardNoteNumber, virtualKeyboard->GetVelocity(), 0);
+        mMIDIReceiver.onMessageReceived(&midiMessage);
+    }
+
+    lastVirtualKeyboardNoteNumber = virtualKeyboardNoteNumber;
 }

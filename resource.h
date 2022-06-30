@@ -68,15 +68,19 @@ instrument determined by PLUG _IS _INST
 #define KNOB_ID 101
 #define sKNOB_ID 102
 #define BACKGROUND_ID 103
+#define KEYW_ID 104
+#define KEYB_ID 105
 
 // Image resource locations for this plug.
 #define KNOB_FN "resources/img/knob.png"
 #define sKNOB_FN "resources/img/SynthSwitchKnob.png"
-#define BACKGROUND_FN "resources/img/synthBGlabels.png"
+#define BACKGROUND_FN "resources/img/synthBGlabelskeys.png"
+#define KEYW_FN "resources/img/whitekey.png"
+#define KEYB_FN "resources/img/blackkey.png"
 
 // GUI default dimensions
-#define GUI_WIDTH 338
-#define GUI_HEIGHT 338
+#define GUI_WIDTH 434
+#define GUI_HEIGHT 402
 
 // on MSVC, you must define SA_API in the resource editor preprocessor macros as well as the c++ ones
 #if defined(SA_API)
