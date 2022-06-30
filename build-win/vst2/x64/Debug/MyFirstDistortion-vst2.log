@@ -1,7 +1,4 @@
 ﻿cl : command line warning D9002: ignoring unknown option '/arch:SSE2'
-  EnvelopeGenerator.cpp
-C:\wdl-ol\IPlugExamples\ChSynth\EnvelopeGenerator.cpp(40,57): warning C4244: '=': conversion from 'double' to 'unsigned __int64', possible loss of data
-C:\wdl-ol\IPlugExamples\ChSynth\EnvelopeGenerator.cpp(105,54): warning C4244: 'initializing': conversion from 'double' to 'unsigned __int64', possible loss of data
   MyFirstDistortion.cpp
 C:\wdl-ol\IPlugExamples\ChSynth\resource.h(93,1): warning C4005: 'EFFECT_TYPE_VST3': macro redefinition
 C:\wdl-ol\IPlugExamples\ChSynth\resource.h(60): message : see previous definition of 'EFFECT_TYPE_VST3'
@@ -22,6 +19,4 @@ C:\wdl-ol\IPlugExamples\ChSynth\resource.h(60): message : see previous definitio
 C:\wdl-ol\IPlugExamples\ChSynth\MyFirstDistortion.cpp(51,52): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
 C:\wdl-ol\IPlugExamples\ChSynth\MyFirstDistortion.cpp(51,47): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
 C:\wdl-ol\IPlugExamples\ChSynth\MyFirstDistortion.cpp(51,42): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-  Generating Code...
-     Creating library build-win\vst2\x64\bin\MyFirstDistortion.lib and object build-win\vst2\x64\bin\MyFirstDistortion.exp
   MyFirstDistortion-vst2.vcxproj -> C:\wdl-ol\IPlugExamples\ChSynth\build-win\vst2\x64\bin\MyFirstDistortion.dll

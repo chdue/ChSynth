@@ -113,7 +113,7 @@ void MyFirstDistortion::ProcessDoubleReplacing(double** inputs, double** outputs
         mMIDIReceiver.advance();
         int velocity = mMIDIReceiver.getLastVelocity();
         mOscillator.setFrequency(mMIDIReceiver.getLastFrequency());
-        leftOutput[i] = rightOutput[i] = mOscillator.nextSample() * mEnvelopeGenerator.nextSample() * velocity / 127.0;
+        leftOutput[i] = rightOutput[i] = mGain * mOscillator.nextSample() * mEnvelopeGenerator.nextSample() * velocity / 127.0;
     }
 
     mMIDIReceiver.Flush(nFrames);
