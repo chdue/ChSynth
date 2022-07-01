@@ -1,10 +1,14 @@
 #ifndef __MYFIRSTDISTORTION__
 #define __MYFIRSTDISTORTION__
 
+// much of this project was made following a guide to wdl-ol:
+//    martin-finke.de/blog/tags/making_audio_plugins.html
+
 #include "IPlug_include_in_plug_hdr.h"
 #include "Oscillator.h"
 #include "MIDIReceiver.h"
 #include "EnvelopeGenerator.h"
+#include "Filter.h"
 
 class MyFirstDistortion : public IPlug
 {
@@ -43,6 +47,11 @@ private:
 
   inline void onBeganEnvelopeCycle() { mOscillator.setMuted(false); }
   inline void onFinishedEnvelopeCycle() { mOscillator.setMuted(true); }
+
+  Filter mFilter;
+
+  Oscillator mLFO;
+  double lfoFilterModAmount;
 };
 
 #endif

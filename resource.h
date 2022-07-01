@@ -70,6 +70,7 @@ instrument determined by PLUG _IS _INST
 #define BACKGROUND_ID 103
 #define KEYW_ID 104
 #define KEYB_ID 105
+#define FILTERMODE_ID 106
 
 // Image resource locations for this plug.
 #define KNOB_FN "resources/img/knob.png"
@@ -77,6 +78,7 @@ instrument determined by PLUG _IS _INST
 #define BACKGROUND_FN "resources/img/synthBGlabelskeys.png"
 #define KEYW_FN "resources/img/whitekey.png"
 #define KEYB_FN "resources/img/blackkey.png"
+#define FILTERMODE_FN "resources/img/filtermode.png"
 
 // GUI default dimensions
 #define GUI_WIDTH 434

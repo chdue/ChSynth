@@ -14,6 +14,14 @@ enum EParams
     mDecay = 3,
     mSustain = 4,
     mRelease = 5,
+    mFilterMode,
+    mFilterCutoff,
+    mFilterResonance,
+    mFilterAttack,
+    mFilterDecay,
+    mFilterSustain,
+    mFilterRelease,
+    mFilterEnvelopeAmount,
     kNumParams
 };
 
@@ -36,7 +44,10 @@ enum ELayout
   adsrKnobXl = 90 - 48,
   adsrKnobXr = kWidth - 90,
   adsrKnobYu = 20,
-  adsrKnobYd = 120
+  adsrKnobYd = 120,
+
+  filterY = 220,
+  filterX = adsrKnobXl
 };
 
 MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
@@ -75,18 +86,30 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
   GetParam(mAttack)->SetShape(3);
   pGraphics->AttachControl(new IKnobMultiControl(this, adsrKnobXl, adsrKnobYu, mAttack, &gKnob));
   // Decay knob:
-  GetParam(mDecay)->InitDouble("Decay", 0.5, 0.01, 15.0, 0.001);
+  GetParam(mDecay)->InitDouble("Decay", 15.0, 0.01, 15.0, 0.001);
   GetParam(mDecay)->SetShape(3);
   pGraphics->AttachControl(new IKnobMultiControl(this, adsrKnobXl, adsrKnobYd, mDecay, &gKnob));
   // Sustain knob:
-  GetParam(mSustain)->InitDouble("Sustain", 0.1, 0.001, 1.0, 0.001);
+  GetParam(mSustain)->InitDouble("Sustain", 1.0, 0.001, 1.0, 0.001);
   GetParam(mSustain)->SetShape(2);
   pGraphics->AttachControl(new IKnobMultiControl(this, adsrKnobXr, adsrKnobYu, mSustain, &gKnob));
   // Release knob:
-  GetParam(mRelease)->InitDouble("Release", 1.0, 0.001, 15.0, 0.001);
+  GetParam(mRelease)->InitDouble("Release", 0.5, 0.001, 15.0, 0.001);
   GetParam(mRelease)->SetShape(3);
   pGraphics->AttachControl(new IKnobMultiControl(this, adsrKnobXr, adsrKnobYd, mRelease, &gKnob));
 
+
+  GetParam(mFilterMode)->InitEnum("Filter Mode", Filter::FILTER_MODE_LOWPASS, Filter::kNumFilterModes);
+  IBitmap filtermodeBitmap = pGraphics->LoadIBitmap(FILTERMODE_ID, FILTERMODE_FN, 3);
+  pGraphics->AttachControl(new ISwitchControl(this, filterX, filterY, mFilterMode, &filtermodeBitmap));
+  // Knobs for filter cutoff and resonance
+  // Cutoff knob:
+  GetParam(mFilterCutoff)->InitDouble("Cutoff", 0.99, 0.01, 0.99, 0.001);
+  GetParam(mFilterCutoff)->SetShape(2);
+  pGraphics->AttachControl(new IKnobMultiControl(this, filterX-25, filterY+50, mFilterCutoff, &gKnob));
+  // Resonance knob:
+  GetParam(mFilterResonance)->InitDouble("Resonance", 0.01, 0.01, 1.0, 0.001);
+  pGraphics->AttachControl(new IKnobMultiControl(this, filterX+25, filterY+50, mFilterResonance, &gKnob));
   
   AttachGraphics(pGraphics);
   //CreatePresets();
@@ -113,7 +136,7 @@ void MyFirstDistortion::ProcessDoubleReplacing(double** inputs, double** outputs
         mMIDIReceiver.advance();
         int velocity = mMIDIReceiver.getLastVelocity();
         mOscillator.setFrequency(mMIDIReceiver.getLastFrequency());
-        leftOutput[i] = rightOutput[i] = mGain * mOscillator.nextSample() * mEnvelopeGenerator.nextSample() * velocity / 127.0;
+        leftOutput[i] = rightOutput[i] = mFilter.process(mGain * mOscillator.nextSample() * mEnvelopeGenerator.nextSample() * velocity / 127.0);
     }
 
     mMIDIReceiver.Flush(nFrames);
@@ -163,6 +186,16 @@ void MyFirstDistortion::OnParamChange(int paramIdx)
     case mSustain: //4
     case mRelease: //5
         mEnvelopeGenerator.setStageValue(static_cast<EnvelopeGenerator::EnvelopeStage>(paramIdx), GetParam(paramIdx)->Value());
+        break;
+
+    case mFilterCutoff:
+        mFilter.setCutoff(GetParam(paramIdx)->Value());
+        break;
+    case mFilterResonance:
+        mFilter.setResonance(GetParam(paramIdx)->Value());
+        break;
+    case mFilterMode:
+        mFilter.setFilterMode(static_cast<Filter::FilterMode>(GetParam(paramIdx)->Int()));
         break;
 
 
