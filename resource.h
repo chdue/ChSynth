@@ -65,24 +65,44 @@ instrument determined by PLUG _IS _INST
 #define PLUG_DOES_STATE_CHUNKS 0
 
 // Unique IDs for each image resource.
-#define KNOB_ID 101
-#define sKNOB_ID 102
-#define BACKGROUND_ID 103
-#define KEYW_ID 104
-#define KEYB_ID 105
-#define FILTERMODE_ID 106
+#define WAVESWITCH_ID 101
+#define BACKGROUND_ID 102
+#define KEYW_ID 103
+#define KEYB_ID 104
+#define FILTERMODE_ID 105
+#define aKNOB_ID 106
+#define dKNOB_ID 107
+#define sKNOB_ID 108
+#define rKNOB_ID 109
+#define gKNOB_ID 110
+#define pmKNOB_ID 111
+#define cutKNOB_ID 112
+#define resKNOB_ID 113
+#define lfoKNOB_ID 114
+#define envKNOB_ID 115
+#define freqKNOB_ID 116
 
 // Image resource locations for this plug.
-#define KNOB_FN "resources/img/knob.png"
-#define sKNOB_FN "resources/img/SynthSwitchKnob.png"
-#define BACKGROUND_FN "resources/img/synthBGlabelskeys.png"
+#define WAVESWITCH_FN "resources/img/waveforms.png"
+#define BACKGROUND_FN "resources/img/fridgebg.png"
 #define KEYW_FN "resources/img/whitekey.png"
 #define KEYB_FN "resources/img/blackkey.png"
-#define FILTERMODE_FN "resources/img/filtermode.png"
+#define FILTERMODE_FN "resources/img/filtermodes.png"
+#define aKNOB_FN "resources/img/knobs/a.png"
+#define dKNOB_FN "resources/img/knobs/d.png"
+#define sKNOB_FN "resources/img/knobs/s.png"
+#define rKNOB_FN "resources/img/knobs/r.png"
+#define gKNOB_FN "resources/img/knobs/g.png"
+#define pmKNOB_FN "resources/img/knobs/pm.png"
+#define cutKNOB_FN "resources/img/knobs/cut.png"
+#define resKNOB_FN "resources/img/knobs/res.png"
+#define lfoKNOB_FN "resources/img/knobs/lfo.png"
+#define envKNOB_FN "resources/img/knobs/env.png"
+#define freqKNOB_FN "resources/img/knobs/freq.png"
 
 // GUI default dimensions
 #define GUI_WIDTH 434
-#define GUI_HEIGHT 402
+#define GUI_HEIGHT 816
 
 // on MSVC, you must define SA_API in the resource editor preprocessor macros as well as the c++ ones
 #if defined(SA_API)

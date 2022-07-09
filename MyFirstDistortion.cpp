@@ -9,11 +9,12 @@ const int kNumPrograms = 1;
 enum EParams
 {
     kGain = 0,
-    sSwitch = 1,
+    sSwitch = 1, // remove
     mAttack = 2,
     mDecay = 3,
     mSustain = 4,
     mRelease = 5,
+    mWaveform,
     mFilterMode,
     mFilterCutoff,
     mFilterResonance,
@@ -30,24 +31,10 @@ enum ELayout
   kWidth = GUI_WIDTH,
   kHeight = GUI_HEIGHT,
 
-  sSwitchX = (kWidth - 64) / 2,     // - 64 because the knob width/height is 64
-  sSwitchY = (kHeight - 64 - 64) / 2,    // another -64 because the keyboard height is 64
-  sSwitchFrames = 6,
-
-  kGainX = sSwitchX + 100,
-  kGainY = sSwitchY + 100,
   kKnobFrames = 60,
 
   kKeybX = 1,
-  kKeybY = kHeight - 64,
-
-  adsrKnobXl = 90 - 48,
-  adsrKnobXr = kWidth - 90,
-  adsrKnobYu = 20,
-  adsrKnobYd = 120,
-
-  filterY = 220,
-  filterX = adsrKnobXl
+  kKeybY = kHeight - 64
 };
 
 MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
@@ -56,63 +43,82 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
 {
   TRACE;
 
+
+  // params
+
   GetParam(kGain)->InitDouble("Makeup Gain", 0, -23.0, 23.0, 0.01, "dBs");
   GetParam(kGain)->SetShape(1.);
 
-  GetParam(sSwitch)->InitInt("Waveform", 0.0, 0.0, 5.0,  "Type");
-  GetParam(sSwitch)->SetShape(1.);
+  GetParam(mWaveform)->InitEnum("Waveform", OSCILLATOR_MODE_SINE, 6);
+
+  GetParam(mAttack)->InitDouble("Attack", 0.05, 0.01, 10.0, 0.001);
+  GetParam(mAttack)->SetShape(3);
+
+  GetParam(mDecay)->InitDouble("Decay", 15.0, 0.01, 15.0, 0.001);
+  GetParam(mDecay)->SetShape(3);
+
+  GetParam(mSustain)->InitDouble("Sustain", 1.0, 0.001, 1.0, 0.001);
+  GetParam(mSustain)->SetShape(2);
+
+  GetParam(mRelease)->InitDouble("Release", 0.5, 0.001, 15.0, 0.001);
+  GetParam(mRelease)->SetShape(3);
+
+  GetParam(mFilterMode)->InitEnum("Filter Mode", Filter::FILTER_MODE_LOWPASS, Filter::kNumFilterModes);
+
+  GetParam(mFilterCutoff)->InitDouble("Cutoff", 0.99, 0.01, 0.99, 0.001);
+  GetParam(mFilterCutoff)->SetShape(2);
+
+  GetParam(mFilterResonance)->InitDouble("Resonance", 0.01, 0.01, 1.0, 0.001);
+
+
+  // graphics
 
   IGraphics* pGraphics = MakeGraphics(this, kWidth, kHeight);
-  //pGraphics->AttachPanelBackground(&COLOR_RED);
   pGraphics->AttachBackground(BACKGROUND_ID, BACKGROUND_FN);
 
-  IBitmap gKnob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, kKnobFrames);
-  IBitmap knob = pGraphics->LoadIBitmap(sKNOB_ID, sKNOB_FN, sSwitchFrames);
+
+  IBitmap waveSwitchMap = pGraphics->LoadIBitmap(WAVESWITCH_ID, WAVESWITCH_FN, 6);
+
+  IBitmap filtermodeBitmap = pGraphics->LoadIBitmap(FILTERMODE_ID, FILTERMODE_FN, 3);
 
   IBitmap whiteKeyImage = pGraphics->LoadIBitmap(KEYW_ID, KEYW_FN, 6); // 6 frames
   IBitmap blackKeyImage = pGraphics->LoadIBitmap(KEYB_ID, KEYB_FN);
+
+
+  IBitmap aKnob = pGraphics->LoadIBitmap(aKNOB_ID, aKNOB_FN, kKnobFrames);
+  IBitmap dKnob = pGraphics->LoadIBitmap(dKNOB_ID, dKNOB_FN, kKnobFrames);
+  IBitmap sKnob = pGraphics->LoadIBitmap(sKNOB_ID, sKNOB_FN, kKnobFrames);
+  IBitmap rKnob = pGraphics->LoadIBitmap(rKNOB_ID, rKNOB_FN, kKnobFrames);
+  IBitmap gKnob = pGraphics->LoadIBitmap(gKNOB_ID, gKNOB_FN, kKnobFrames);
+  IBitmap pmKnob = pGraphics->LoadIBitmap(pmKNOB_ID, pmKNOB_FN, kKnobFrames);
+  IBitmap cutKnob = pGraphics->LoadIBitmap(cutKNOB_ID, cutKNOB_FN, kKnobFrames);
+  IBitmap resKnob = pGraphics->LoadIBitmap(resKNOB_ID, resKNOB_FN, kKnobFrames);
+  IBitmap lfoKnob = pGraphics->LoadIBitmap(lfoKNOB_ID, lfoKNOB_FN, kKnobFrames);
+  IBitmap envKnob = pGraphics->LoadIBitmap(envKNOB_ID, envKNOB_FN, kKnobFrames);
+  IBitmap freqKnob = pGraphics->LoadIBitmap(freqKNOB_ID, freqKNOB_FN, kKnobFrames);
+
+
+  // controls
+
   //                            C#     D#          F#      G#      A#
   int keyCoordinates[12] = { 0, 7, 12, 20, 24, 36, 43, 48, 56, 60, 69, 72 };
   mVirtualKeyboard = new IKeyboardControl(this, kKeybX, kKeybY, virtualKeyboardMinimumNoteNumber, /* octaves: */ 5, &whiteKeyImage, &blackKeyImage, keyCoordinates);
   pGraphics->AttachControl(mVirtualKeyboard);
 
-  pGraphics->AttachControl(new IKnobMultiControl(this, kGainX, kGainY, kGain, &gKnob));
-  pGraphics->AttachControl(new IKnobMultiControl(this, sSwitchX, sSwitchY, sSwitch, &knob));
+  pGraphics->AttachControl(new IKnobMultiControl(this, 330, 156, kGain, &gKnob));
 
+  pGraphics->AttachControl(new ISwitchControl(this, 85, 82, mWaveform, &waveSwitchMap));
 
-  // Knob bitmap for ADSR
-  // Attack knob:
-  GetParam(mAttack)->InitDouble("Attack", 0.05, 0.01, 10.0, 0.001);
-  GetParam(mAttack)->SetShape(3);
-  pGraphics->AttachControl(new IKnobMultiControl(this, adsrKnobXl, adsrKnobYu, mAttack, &gKnob));
-  // Decay knob:
-  GetParam(mDecay)->InitDouble("Decay", 15.0, 0.01, 15.0, 0.001);
-  GetParam(mDecay)->SetShape(3);
-  pGraphics->AttachControl(new IKnobMultiControl(this, adsrKnobXl, adsrKnobYd, mDecay, &gKnob));
-  // Sustain knob:
-  GetParam(mSustain)->InitDouble("Sustain", 1.0, 0.001, 1.0, 0.001);
-  GetParam(mSustain)->SetShape(2);
-  pGraphics->AttachControl(new IKnobMultiControl(this, adsrKnobXr, adsrKnobYu, mSustain, &gKnob));
-  // Release knob:
-  GetParam(mRelease)->InitDouble("Release", 0.5, 0.001, 15.0, 0.001);
-  GetParam(mRelease)->SetShape(3);
-  pGraphics->AttachControl(new IKnobMultiControl(this, adsrKnobXr, adsrKnobYd, mRelease, &gKnob));
+  pGraphics->AttachControl(new IKnobMultiControl(this, 72, 174, mAttack, &aKnob));
+  pGraphics->AttachControl(new IKnobMultiControl(this, 124, 174, mDecay, &dKnob));
+  pGraphics->AttachControl(new IKnobMultiControl(this, 178, 174, mSustain, &sKnob));
+  pGraphics->AttachControl(new IKnobMultiControl(this, 234, 174, mRelease, &rKnob));
 
-
-  GetParam(mFilterMode)->InitEnum("Filter Mode", Filter::FILTER_MODE_LOWPASS, Filter::kNumFilterModes);
-  IBitmap filtermodeBitmap = pGraphics->LoadIBitmap(FILTERMODE_ID, FILTERMODE_FN, 3);
-  pGraphics->AttachControl(new ISwitchControl(this, filterX, filterY, mFilterMode, &filtermodeBitmap));
-  // Knobs for filter cutoff and resonance
-  // Cutoff knob:
-  GetParam(mFilterCutoff)->InitDouble("Cutoff", 0.99, 0.01, 0.99, 0.001);
-  GetParam(mFilterCutoff)->SetShape(2);
-  pGraphics->AttachControl(new IKnobMultiControl(this, filterX-25, filterY+50, mFilterCutoff, &gKnob));
-  // Resonance knob:
-  GetParam(mFilterResonance)->InitDouble("Resonance", 0.01, 0.01, 1.0, 0.001);
-  pGraphics->AttachControl(new IKnobMultiControl(this, filterX+25, filterY+50, mFilterResonance, &gKnob));
+  pGraphics->AttachControl(new ISwitchControl(this, 246, 401, mFilterMode, &filtermodeBitmap));
+  pGraphics->AttachControl(new IKnobMultiControl(this, 165, 346, mFilterCutoff, &cutKnob));
+  pGraphics->AttachControl(new IKnobMultiControl(this, 165, 413, mFilterResonance, &resKnob));
   
   AttachGraphics(pGraphics);
-  //CreatePresets();
 
   mMIDIReceiver.noteOn.Connect(this, &MyFirstDistortion::onNoteOn);
   mMIDIReceiver.noteOff.Connect(this, &MyFirstDistortion::onNoteOff);
@@ -160,25 +166,8 @@ void MyFirstDistortion::OnParamChange(int paramIdx)
       mGain = exp(GetParam(kGain)->Value() / 10); // 10 * log(ratio) = dB Change
       break;
 
-    case sSwitch:
-        if (GetParam(sSwitch)->Value() == 0) {
-            mOscillator.setMode(OSCILLATOR_MODE_SINE);
-        }
-        else if (GetParam(sSwitch)->Value() == 1) {
-            mOscillator.setMode(OSCILLATOR_MODE_SAW);
-        }
-        else if (GetParam(sSwitch)->Value() == 2) {
-            mOscillator.setMode(OSCILLATOR_MODE_TRIANGLE);
-        }
-        else if (GetParam(sSwitch)->Value() == 3) {
-            mOscillator.setMode(OSCILLATOR_MODE_SQUARE);
-        }
-        else if (GetParam(sSwitch)->Value() == 4) {
-            mOscillator.setMode(OSCILLATOR_MODE_ROUNDED_SQUARE);
-        }
-        else if (GetParam(sSwitch)->Value()  == 5) {
-            mOscillator.setMode(OSCILLATOR_MODE_RANDOM);
-        }
+    case mWaveform:
+        mOscillator.setMode(static_cast<OscillatorMode>(GetParam(mWaveform)->Int()));
         break;
 
     case mAttack: //2
@@ -204,11 +193,6 @@ void MyFirstDistortion::OnParamChange(int paramIdx)
   }
 }
 
-/*
-void MyFirstDistortion::CreatePresets() {
-    MakeDefaultPreset((char*)"-", kNumPrograms);
-}
-*/
 
 void MyFirstDistortion::ProcessMidiMsg(IMidiMsg* pMsg) {
     mMIDIReceiver.onMessageReceived(pMsg);
