@@ -9,12 +9,11 @@ const int kNumPrograms = 1;
 enum EParams
 {
     kGain = 0,
-    sSwitch = 1, // remove
+    mWaveform = 1,
     mAttack = 2,
     mDecay = 3,
     mSustain = 4,
     mRelease = 5,
-    mWaveform,
     mFilterMode,
     mFilterCutoff,
     mFilterResonance,
@@ -39,7 +38,8 @@ enum ELayout
 
 MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
   :	IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), mFrequency(1.),
-    lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1)
+    lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1),
+    filterEnvelopeAmount(0.0)
 {
   TRACE;
 
@@ -69,6 +69,20 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
   GetParam(mFilterCutoff)->SetShape(2);
 
   GetParam(mFilterResonance)->InitDouble("Resonance", 0.01, 0.01, 1.0, 0.001);
+
+  GetParam(mFilterAttack)->InitDouble("Filter Env Attack", 0.05, 0.01, 10.0, 0.001);
+  GetParam(mFilterAttack)->SetShape(3);
+
+  GetParam(mFilterDecay)->InitDouble("Filter Env Decay", 15.0, 0.01, 15.0, 0.001);
+  GetParam(mFilterDecay)->SetShape(3);
+
+  GetParam(mFilterSustain)->InitDouble("Filter Env Sustain", 1.0, 0.001, 1.0, 0.001);
+  GetParam(mFilterSustain)->SetShape(2);
+
+  GetParam(mFilterRelease)->InitDouble("Filter Env Release", 0.5, 0.001, 15.0, 0.001);
+  GetParam(mFilterRelease)->SetShape(3);
+
+  GetParam(mFilterEnvelopeAmount)->InitDouble("Filter Env Amount", 0.0, -1.0, 1.0, 0.001);
 
 
   // graphics
@@ -117,6 +131,16 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
   pGraphics->AttachControl(new ISwitchControl(this, 246, 401, mFilterMode, &filtermodeBitmap));
   pGraphics->AttachControl(new IKnobMultiControl(this, 165, 346, mFilterCutoff, &cutKnob));
   pGraphics->AttachControl(new IKnobMultiControl(this, 165, 413, mFilterResonance, &resKnob));
+
+
+  pGraphics->AttachControl(new IKnobMultiControl(this, 190, 485, mFilterAttack, &aKnob));
+  pGraphics->AttachControl(new IKnobMultiControl(this, 240, 485, mFilterDecay, &dKnob));
+  pGraphics->AttachControl(new IKnobMultiControl(this, 295, 485, mFilterSustain, &sKnob));
+  pGraphics->AttachControl(new IKnobMultiControl(this, 351, 485, mFilterRelease, &rKnob));
+  pGraphics->AttachControl(new IKnobMultiControl(this, 328, 567, mFilterEnvelopeAmount, &envKnob));
+
+
+
   
   AttachGraphics(pGraphics);
 
@@ -142,6 +166,7 @@ void MyFirstDistortion::ProcessDoubleReplacing(double** inputs, double** outputs
         mMIDIReceiver.advance();
         int velocity = mMIDIReceiver.getLastVelocity();
         mOscillator.setFrequency(mMIDIReceiver.getLastFrequency());
+        mFilter.setCutoffMod(mFilterEnvelopeGenerator.nextSample() * filterEnvelopeAmount);
         leftOutput[i] = rightOutput[i] = mFilter.process(mGain * mOscillator.nextSample() * mEnvelopeGenerator.nextSample() * velocity / 127.0);
     }
 
@@ -154,6 +179,7 @@ void MyFirstDistortion::Reset()
     IMutexLock lock(this);
     mOscillator.setSampleRate(GetSampleRate());
     mEnvelopeGenerator.setSampleRate(GetSampleRate());
+    mFilterEnvelopeGenerator.setSampleRate(GetSampleRate());
 }
 
 void MyFirstDistortion::OnParamChange(int paramIdx)
@@ -185,6 +211,22 @@ void MyFirstDistortion::OnParamChange(int paramIdx)
         break;
     case mFilterMode:
         mFilter.setFilterMode(static_cast<Filter::FilterMode>(GetParam(paramIdx)->Int()));
+        break;
+
+    case mFilterAttack:
+        mFilterEnvelopeGenerator.setStageValue(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK, GetParam(paramIdx)->Value());
+        break;
+    case mFilterDecay:
+        mFilterEnvelopeGenerator.setStageValue(EnvelopeGenerator::ENVELOPE_STAGE_DECAY, GetParam(paramIdx)->Value());
+        break;
+    case mFilterSustain:
+        mFilterEnvelopeGenerator.setStageValue(EnvelopeGenerator::ENVELOPE_STAGE_SUSTAIN, GetParam(paramIdx)->Value());
+        break;
+    case mFilterRelease:
+        mFilterEnvelopeGenerator.setStageValue(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE, GetParam(paramIdx)->Value());
+        break;
+    case mFilterEnvelopeAmount:
+        filterEnvelopeAmount = GetParam(paramIdx)->Value();
         break;
 
 
