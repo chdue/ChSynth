@@ -1,7 +1,6 @@
 ﻿cl : command line warning D9002: ignoring unknown option '/arch:SSE2'
-  Filter.cpp
   MyFirstDistortion.cpp
-C:\wdl-ol\IPlugExamples\ChSynth\resource.h(115,1): warning C4005: 'EFFECT_TYPE_VST3': macro redefinition
+C:\wdl-ol\IPlugExamples\ChSynth\resource.h(117,1): warning C4005: 'EFFECT_TYPE_VST3': macro redefinition
 C:\wdl-ol\IPlugExamples\ChSynth\resource.h(60): message : see previous definition of 'EFFECT_TYPE_VST3'
 C:\wdl-ol\WDL\IPlug\IPlugStructs.h(239,11): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
 C:\wdl-ol\WDL\IPlug\IPlugStructs.h(241,37): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
@@ -14,9 +13,7 @@ C:\wdl-ol\WDL\IPlug\IPlug_include_in_plug_src.h(60,67): warning C4312: 'type cas
 C:\wdl-ol\WDL\IPlug\IPlug_include_in_plug_src.h(60,68): warning C4311: 'type cast': pointer truncation from 'void *' to 'int'
 C:\wdl-ol\WDL\IPlug\IPlug_include_in_plug_src.h(60,68): warning C4302: 'type cast': truncation from 'void *' to 'int'
 C:\wdl-ol\IPlugExamples\ChSynth\resource.h(60,1): warning C4005: 'EFFECT_TYPE_VST3': macro redefinition
-C:\wdl-ol\IPlugExamples\ChSynth\resource.h(115): message : see previous definition of 'EFFECT_TYPE_VST3'
-C:\wdl-ol\IPlugExamples\ChSynth\resource.h(115,1): warning C4005: 'EFFECT_TYPE_VST3': macro redefinition
+C:\wdl-ol\IPlugExamples\ChSynth\resource.h(117): message : see previous definition of 'EFFECT_TYPE_VST3'
+C:\wdl-ol\IPlugExamples\ChSynth\resource.h(117,1): warning C4005: 'EFFECT_TYPE_VST3': macro redefinition
 C:\wdl-ol\IPlugExamples\ChSynth\resource.h(60): message : see previous definition of 'EFFECT_TYPE_VST3'
-  Generating Code...
-     Creating library build-win\vst2\x64\bin\MyFirstDistortion.lib and object build-win\vst2\x64\bin\MyFirstDistortion.exp
   MyFirstDistortion-vst2.vcxproj -> C:\wdl-ol\IPlugExamples\ChSynth\build-win\vst2\x64\bin\MyFirstDistortion.dll

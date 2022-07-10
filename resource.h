@@ -81,6 +81,7 @@ instrument determined by PLUG _IS _INST
 #define lfoKNOB_ID 114
 #define envKNOB_ID 115
 #define freqKNOB_ID 116
+#define lfoWAVESWITCH_ID 117
 
 // Image resource locations for this plug.
 #define WAVESWITCH_FN "resources/img/waveforms.png"
@@ -99,6 +100,7 @@ instrument determined by PLUG _IS _INST
 #define lfoKNOB_FN "resources/img/knobs/lfo.png"
 #define envKNOB_FN "resources/img/knobs/env.png"
 #define freqKNOB_FN "resources/img/knobs/freq.png"
+#define lfoWAVESWITCH_FN "resources/img/lfowaveforms.png"
 
 // GUI default dimensions
 #define GUI_WIDTH 434

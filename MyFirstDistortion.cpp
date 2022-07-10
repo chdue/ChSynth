@@ -22,6 +22,9 @@ enum EParams
     mFilterSustain,
     mFilterRelease,
     mFilterEnvelopeAmount,
+    mLFOWaveform,
+    mLFOFreq,
+    mlfoFilterModAmount,
     kNumParams
 };
 
@@ -39,7 +42,7 @@ enum ELayout
 MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
   :	IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), mFrequency(1.),
     lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1),
-    filterEnvelopeAmount(0.0)
+    filterEnvelopeAmount(0.0), lfoFilterModAmount(0.0)
 {
   TRACE;
 
@@ -84,12 +87,15 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
 
   GetParam(mFilterEnvelopeAmount)->InitDouble("Filter Env Amount", 0.0, -1.0, 1.0, 0.001);
 
+  GetParam(mLFOWaveform)->InitEnum("LFO Waveform", OSCILLATOR_MODE_SINE, 5);
+  GetParam(mLFOFreq)->InitDouble("LFO Frequency", 6.0, 0.01, 30.0, 0.001);
+  GetParam(mlfoFilterModAmount)->InitDouble("LFO Filter Mod Amount", 0.0, 0.00, 1.0, 0.001);
+
 
   // graphics
 
   IGraphics* pGraphics = MakeGraphics(this, kWidth, kHeight);
   pGraphics->AttachBackground(BACKGROUND_ID, BACKGROUND_FN);
-
 
   IBitmap waveSwitchMap = pGraphics->LoadIBitmap(WAVESWITCH_ID, WAVESWITCH_FN, 6);
 
@@ -97,7 +103,6 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
 
   IBitmap whiteKeyImage = pGraphics->LoadIBitmap(KEYW_ID, KEYW_FN, 6); // 6 frames
   IBitmap blackKeyImage = pGraphics->LoadIBitmap(KEYB_ID, KEYB_FN);
-
 
   IBitmap aKnob = pGraphics->LoadIBitmap(aKNOB_ID, aKNOB_FN, kKnobFrames);
   IBitmap dKnob = pGraphics->LoadIBitmap(dKNOB_ID, dKNOB_FN, kKnobFrames);
@@ -110,6 +115,8 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
   IBitmap lfoKnob = pGraphics->LoadIBitmap(lfoKNOB_ID, lfoKNOB_FN, kKnobFrames);
   IBitmap envKnob = pGraphics->LoadIBitmap(envKNOB_ID, envKNOB_FN, kKnobFrames);
   IBitmap freqKnob = pGraphics->LoadIBitmap(freqKNOB_ID, freqKNOB_FN, kKnobFrames);
+
+  IBitmap lfowaveSwitchMap = pGraphics->LoadIBitmap(lfoWAVESWITCH_ID, lfoWAVESWITCH_FN, 5);
 
 
   // controls
@@ -139,16 +146,20 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
   pGraphics->AttachControl(new IKnobMultiControl(this, 351, 485, mFilterRelease, &rKnob));
   pGraphics->AttachControl(new IKnobMultiControl(this, 328, 567, mFilterEnvelopeAmount, &envKnob));
 
+  pGraphics->AttachControl(new ISwitchControl(this, 43, 643, mLFOWaveform, &lfowaveSwitchMap));
+  pGraphics->AttachControl(new IKnobMultiControl(this, 240, 637, mLFOFreq, &freqKnob));
+  pGraphics->AttachControl(new IKnobMultiControl(this, 118, 567, mlfoFilterModAmount, &lfoKnob));
 
-
-  
   AttachGraphics(pGraphics);
+
 
   mMIDIReceiver.noteOn.Connect(this, &MyFirstDistortion::onNoteOn);
   mMIDIReceiver.noteOff.Connect(this, &MyFirstDistortion::onNoteOff);
 
   mEnvelopeGenerator.beganEnvelopeCycle.Connect(this, &MyFirstDistortion::onBeganEnvelopeCycle);
   mEnvelopeGenerator.finishedEnvelopeCycle.Connect(this, &MyFirstDistortion::onFinishedEnvelopeCycle);
+
+  mLFO.setMuted(true);
 }
 
 MyFirstDistortion::~MyFirstDistortion() {}
@@ -165,8 +176,9 @@ void MyFirstDistortion::ProcessDoubleReplacing(double** inputs, double** outputs
     for (int i = 0; i < nFrames; ++i) {
         mMIDIReceiver.advance();
         int velocity = mMIDIReceiver.getLastVelocity();
+        double lfoFilterModulation = mLFO.nextSample() * lfoFilterModAmount;
         mOscillator.setFrequency(mMIDIReceiver.getLastFrequency());
-        mFilter.setCutoffMod(mFilterEnvelopeGenerator.nextSample() * filterEnvelopeAmount);
+        mFilter.setCutoffMod((mFilterEnvelopeGenerator.nextSample() * filterEnvelopeAmount) + lfoFilterModulation);
         leftOutput[i] = rightOutput[i] = mFilter.process(mGain * mOscillator.nextSample() * mEnvelopeGenerator.nextSample() * velocity / 127.0);
     }
 
@@ -180,6 +192,7 @@ void MyFirstDistortion::Reset()
     mOscillator.setSampleRate(GetSampleRate());
     mEnvelopeGenerator.setSampleRate(GetSampleRate());
     mFilterEnvelopeGenerator.setSampleRate(GetSampleRate());
+    mLFO.setSampleRate(GetSampleRate());
 }
 
 void MyFirstDistortion::OnParamChange(int paramIdx)
@@ -229,6 +242,22 @@ void MyFirstDistortion::OnParamChange(int paramIdx)
         filterEnvelopeAmount = GetParam(paramIdx)->Value();
         break;
 
+    case mLFOWaveform:
+        mLFO.setMode(static_cast<OscillatorMode>(GetParam(mLFOWaveform)->Int()));
+        break;
+
+    case mLFOFreq:
+        mLFO.setFrequency(static_cast<OscillatorMode>(GetParam(mLFOFreq)->Value()));
+        break;
+
+    case mlfoFilterModAmount:
+        lfoFilterModAmount = GetParam(paramIdx)->Value();
+        if (lfoFilterModAmount == 0) {
+            mLFO.setMuted(true);
+        }
+        else {
+            mLFO.setMuted(false);
+        }
 
     default:
       break;

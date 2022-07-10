@@ -39,6 +39,8 @@ private:
   EnvelopeGenerator mEnvelopeGenerator;
   EnvelopeGenerator mFilterEnvelopeGenerator;
   double filterEnvelopeAmount;
+  Oscillator mLFO;
+  double lfoFilterModAmount;
 
   inline void onNoteOn(const int noteNumber, const int velocity) {
       mEnvelopeGenerator.enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
@@ -56,9 +58,6 @@ private:
   inline void onFinishedEnvelopeCycle() { mOscillator.setMuted(true); }
 
   Filter mFilter;
-
-  Oscillator mLFO;
-  double lfoFilterModAmount;
 };
 
 #endif
