@@ -5,10 +5,11 @@
 //    martin-finke.de/blog/tags/making_audio_plugins.html
 
 #include "IPlug_include_in_plug_hdr.h"
-#include "Oscillator.h"
+//#include "Oscillator.h"
 #include "MIDIReceiver.h"
-#include "EnvelopeGenerator.h"
-#include "Filter.h"
+//#include "EnvelopeGenerator.h"
+//#include "Filter.h"
+#include "VoiceManager.h"
 
 class MyFirstDistortion : public IPlug
 {
@@ -34,14 +35,15 @@ public:
 private:
   double mFrequency;
   double mGain;
-  Oscillator mOscillator;
+  //Oscillator mOscillator;
   MIDIReceiver mMIDIReceiver;
-  EnvelopeGenerator mEnvelopeGenerator;
-  EnvelopeGenerator mFilterEnvelopeGenerator;
-  double filterEnvelopeAmount;
-  Oscillator mLFO;
-  double lfoFilterModAmount;
+  //EnvelopeGenerator mEnvelopeGenerator;
+  //EnvelopeGenerator mFilterEnvelopeGenerator;
+  //double filterEnvelopeAmount;
+  //Oscillator mLFO;
+  //double lfoFilterModAmount;
 
+  /*
   inline void onNoteOn(const int noteNumber, const int velocity) {
       mEnvelopeGenerator.enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
       mFilterEnvelopeGenerator.enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
@@ -50,14 +52,17 @@ private:
       mEnvelopeGenerator.enterStage(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE);
       mFilterEnvelopeGenerator.enterStage(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE);
   };
+  */
 
   IControl* mVirtualKeyboard;
   void processVirtualKeyboard();
 
-  inline void onBeganEnvelopeCycle() { mOscillator.setMuted(false); }
-  inline void onFinishedEnvelopeCycle() { mOscillator.setMuted(true); }
+  //inline void onBeganEnvelopeCycle() { mOscillator.setMuted(false); }
+  //inline void onFinishedEnvelopeCycle() { mOscillator.setMuted(true); }
 
-  Filter mFilter;
+  //Filter mFilter;
+
+  VoiceManager voiceManager;
 };
 
 #endif

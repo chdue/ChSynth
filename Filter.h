@@ -28,6 +28,9 @@ public:
     inline void setResonance(double newResonance) { resonance = newResonance; calculateFeedbackAmount(); };
     inline void setCutoffMod(double newCutoffMod) { cutoffMod = newCutoffMod; calculateFeedbackAmount(); }
     inline void setFilterMode(FilterMode newMode) { mode = newMode; }
+    void reset() {
+        buf0 = buf1 = buf2 = buf3 = 0.0;
+    }
 private:
     double cutoff;
     double resonance;

@@ -1,4 +1,5 @@
 #include "EnvelopeGenerator.h"
+double EnvelopeGenerator::sampleRate = 44100.0;
 
 double EnvelopeGenerator::nextSample() {
     if (currentStage != ENVELOPE_STAGE_OFF &&
@@ -78,7 +79,7 @@ void EnvelopeGenerator::setSampleRate(double newSampleRate) {
 
 void EnvelopeGenerator::setStageValue(EnvelopeStage stage,
     double value) {
-    stageValue[stage-1] = value; // adsr ids are 1 less in resource.h than EG.h
+    stageValue[stage] = value;
     if (stage == currentStage) {
         // Re-calculate the multiplier and nextStageSampleIndex
         if (currentStage == ENVELOPE_STAGE_ATTACK ||

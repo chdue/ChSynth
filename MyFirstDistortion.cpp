@@ -3,6 +3,7 @@
 #include "IControl.h"
 #include "IKeyboardControl.h"
 #include "resource.h"
+#include <functional>
 
 const int kNumPrograms = 1;
 
@@ -25,6 +26,7 @@ enum EParams
     mLFOWaveform,
     mLFOFreq,
     mlfoFilterModAmount,
+    mPitchMod,
     kNumParams
 };
 
@@ -39,12 +41,11 @@ enum ELayout
   kKeybY = kHeight - 64
 };
 
-MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
-  :	IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), mFrequency(1.),
-    lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1),
-    filterEnvelopeAmount(0.0), lfoFilterModAmount(0.0)
+MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo) 
+    : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), 
+    lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1) 
 {
-  TRACE;
+    TRACE;
 
 
   // params
@@ -52,7 +53,7 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
   GetParam(kGain)->InitDouble("Makeup Gain", 0, -23.0, 23.0, 0.01, "dBs");
   GetParam(kGain)->SetShape(1.);
 
-  GetParam(mWaveform)->InitEnum("Waveform", OSCILLATOR_MODE_SINE, 6);
+  GetParam(mWaveform)->InitEnum("Waveform", Oscillator::OSCILLATOR_MODE_SINE, 6);
 
   GetParam(mAttack)->InitDouble("Attack", 0.05, 0.01, 10.0, 0.001);
   GetParam(mAttack)->SetShape(3);
@@ -87,7 +88,7 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
 
   GetParam(mFilterEnvelopeAmount)->InitDouble("Filter Env Amount", 0.0, -1.0, 1.0, 0.001);
 
-  GetParam(mLFOWaveform)->InitEnum("LFO Waveform", OSCILLATOR_MODE_SINE, 5);
+  GetParam(mLFOWaveform)->InitEnum("LFO Waveform", Oscillator::OSCILLATOR_MODE_SINE, 5);
   GetParam(mLFOFreq)->InitDouble("LFO Frequency", 6.0, 0.01, 30.0, 0.001);
   GetParam(mlfoFilterModAmount)->InitDouble("LFO Filter Mod Amount", 0.0, 0.00, 1.0, 0.001);
 
@@ -153,13 +154,13 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
   AttachGraphics(pGraphics);
 
 
-  mMIDIReceiver.noteOn.Connect(this, &MyFirstDistortion::onNoteOn);
-  mMIDIReceiver.noteOff.Connect(this, &MyFirstDistortion::onNoteOff);
+  mMIDIReceiver.noteOn.Connect(&voiceManager, &VoiceManager::onNoteOn);
+  mMIDIReceiver.noteOff.Connect(&voiceManager, &VoiceManager::onNoteOff);
 
-  mEnvelopeGenerator.beganEnvelopeCycle.Connect(this, &MyFirstDistortion::onBeganEnvelopeCycle);
-  mEnvelopeGenerator.finishedEnvelopeCycle.Connect(this, &MyFirstDistortion::onFinishedEnvelopeCycle);
+  //mEnvelopeGenerator.beganEnvelopeCycle.Connect(this, &MyFirstDistortion::onBeganEnvelopeCycle);
+  //mEnvelopeGenerator.finishedEnvelopeCycle.Connect(this, &MyFirstDistortion::onFinishedEnvelopeCycle);
 
-  mLFO.setMuted(true);
+  //mLFO.setMuted(true);
 }
 
 MyFirstDistortion::~MyFirstDistortion() {}
@@ -170,16 +171,10 @@ void MyFirstDistortion::ProcessDoubleReplacing(double** inputs, double** outputs
 
     double* leftOutput = outputs[0];
     double* rightOutput = outputs[1];
-
     processVirtualKeyboard();
-
     for (int i = 0; i < nFrames; ++i) {
         mMIDIReceiver.advance();
-        int velocity = mMIDIReceiver.getLastVelocity();
-        double lfoFilterModulation = mLFO.nextSample() * lfoFilterModAmount;
-        mOscillator.setFrequency(mMIDIReceiver.getLastFrequency());
-        mFilter.setCutoffMod((mFilterEnvelopeGenerator.nextSample() * filterEnvelopeAmount) + lfoFilterModulation);
-        leftOutput[i] = rightOutput[i] = mFilter.process(mGain * mOscillator.nextSample() * mEnvelopeGenerator.nextSample() * velocity / 127.0);
+        leftOutput[i] = rightOutput[i] = mGain * voiceManager.nextSample();
     }
 
     mMIDIReceiver.Flush(nFrames);
@@ -189,16 +184,80 @@ void MyFirstDistortion::Reset()
 {
     TRACE;
     IMutexLock lock(this);
-    mOscillator.setSampleRate(GetSampleRate());
-    mEnvelopeGenerator.setSampleRate(GetSampleRate());
-    mFilterEnvelopeGenerator.setSampleRate(GetSampleRate());
-    mLFO.setSampleRate(GetSampleRate());
+    double sampleRate = GetSampleRate();
+    voiceManager.setSampleRate(sampleRate);
 }
 
 void MyFirstDistortion::OnParamChange(int paramIdx)
 {
   IMutexLock lock(this);
-
+  IParam* param = GetParam(paramIdx);
+  if (paramIdx == mLFOWaveform) {
+      voiceManager.setLFOMode(static_cast<Oscillator::OscillatorMode>(param->Int()));
+  }
+  else if (paramIdx == mLFOFreq) {
+      voiceManager.setLFOFrequency(param->Value());
+  }
+  else if (paramIdx == kGain) {
+      mGain = exp(GetParam(kGain)->Value() / 10); // 10 * log(ratio) = dB Change
+  }
+  else {
+      using std::tr1::placeholders::_1;
+      using std::tr1::bind;
+      VoiceManager::VoiceChangerFunction changer;
+      switch (paramIdx) {
+        case mWaveform:
+            changer = bind(&VoiceManager::setOscillatorMode, _1, static_cast<Oscillator::OscillatorMode>(param->Int()));
+            break;
+        case mPitchMod:
+            changer = bind(&VoiceManager::setOscillatorPitchMod, _1, param->Value());
+            break;
+            // Filter Section:
+        case mFilterMode:
+            changer = bind(&VoiceManager::setFilterMode, _1, static_cast<Filter::FilterMode>(param->Int()));
+            break;
+        case mFilterCutoff:
+            changer = bind(&VoiceManager::setFilterCutoff, _1, param->Value());
+            break;
+        case mFilterResonance:
+            changer = bind(&VoiceManager::setFilterResonance, _1, param->Value());
+            break;
+        case mlfoFilterModAmount:
+            changer = bind(&VoiceManager::setFilterLFOAmount, _1, param->Value());
+            break;
+        case mFilterEnvelopeAmount:
+            changer = bind(&VoiceManager::setFilterEnvAmount, _1, param->Value());
+            break;
+            // Volume Envelope:
+        case mAttack:
+            changer = bind(&VoiceManager::setVolumeEnvelopeStageValue, _1, EnvelopeGenerator::ENVELOPE_STAGE_ATTACK, param->Value());
+            break;
+        case mDecay:
+            changer = bind(&VoiceManager::setVolumeEnvelopeStageValue, _1, EnvelopeGenerator::ENVELOPE_STAGE_DECAY, param->Value());
+            break;
+        case mSustain:
+            changer = bind(&VoiceManager::setVolumeEnvelopeStageValue, _1, EnvelopeGenerator::ENVELOPE_STAGE_SUSTAIN, param->Value());
+            break;
+        case mRelease:
+            changer = bind(&VoiceManager::setVolumeEnvelopeStageValue, _1, EnvelopeGenerator::ENVELOPE_STAGE_RELEASE, param->Value());
+            break;
+            // Filter Envelope:
+        case mFilterAttack:
+            changer = bind(&VoiceManager::setFilterEnvelopeStageValue, _1, EnvelopeGenerator::ENVELOPE_STAGE_ATTACK, param->Value());
+            break;
+        case mFilterDecay:
+            changer = bind(&VoiceManager::setFilterEnvelopeStageValue, _1, EnvelopeGenerator::ENVELOPE_STAGE_DECAY, param->Value());
+            break;
+        case mFilterSustain:
+            changer = bind(&VoiceManager::setFilterEnvelopeStageValue, _1, EnvelopeGenerator::ENVELOPE_STAGE_SUSTAIN, param->Value());
+            break;
+        case mFilterRelease:
+            changer = bind(&VoiceManager::setFilterEnvelopeStageValue, _1, EnvelopeGenerator::ENVELOPE_STAGE_RELEASE, param->Value());
+            break;
+      }
+      voiceManager.changeAllVoices(changer);
+  }
+  /*
   switch (paramIdx)
   {
     case kGain:
@@ -243,25 +302,28 @@ void MyFirstDistortion::OnParamChange(int paramIdx)
         break;
 
     case mLFOWaveform:
-        mLFO.setMode(static_cast<OscillatorMode>(GetParam(mLFOWaveform)->Int()));
+        voiceManager.setLFOMode(static_cast<Oscillator::OscillatorMode>(param->Int()));
         break;
 
     case mLFOFreq:
-        mLFO.setFrequency(static_cast<OscillatorMode>(GetParam(mLFOFreq)->Value()));
+        voiceManager.setLFOFrequency(param->Value());
         break;
 
     case mlfoFilterModAmount:
         lfoFilterModAmount = GetParam(paramIdx)->Value();
+        /*
         if (lfoFilterModAmount == 0) {
             mLFO.setMuted(true);
         }
         else {
             mLFO.setMuted(false);
         }
+        *-/
 
     default:
-      break;
+        break;
   }
+  */
 }
 
 
