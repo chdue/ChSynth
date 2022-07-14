@@ -92,6 +92,8 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
   GetParam(mLFOFreq)->InitDouble("LFO Frequency", 6.0, 0.01, 30.0, 0.001);
   GetParam(mlfoFilterModAmount)->InitDouble("LFO Filter Mod Amount", 0.0, 0.00, 1.0, 0.001);
 
+  GetParam(mPitchMod)->InitDouble("Pitch Mod", 0.0, 0.00, 1.0, 0.001);
+
 
   // graphics
 
@@ -150,6 +152,8 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
   pGraphics->AttachControl(new ISwitchControl(this, 43, 643, mLFOWaveform, &lfowaveSwitchMap));
   pGraphics->AttachControl(new IKnobMultiControl(this, 240, 637, mLFOFreq, &freqKnob));
   pGraphics->AttachControl(new IKnobMultiControl(this, 118, 567, mlfoFilterModAmount, &lfoKnob));
+
+  pGraphics->AttachControl(new IKnobMultiControl(this, 262, 75, mPitchMod, &pmKnob));
 
   AttachGraphics(pGraphics);
 
