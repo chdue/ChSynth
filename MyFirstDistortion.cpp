@@ -161,10 +161,6 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
   mMIDIReceiver.noteOn.Connect(&voiceManager, &VoiceManager::onNoteOn);
   mMIDIReceiver.noteOff.Connect(&voiceManager, &VoiceManager::onNoteOff);
 
-  //mEnvelopeGenerator.beganEnvelopeCycle.Connect(this, &MyFirstDistortion::onBeganEnvelopeCycle);
-  //mEnvelopeGenerator.finishedEnvelopeCycle.Connect(this, &MyFirstDistortion::onFinishedEnvelopeCycle);
-
-  //mLFO.setMuted(true);
 }
 
 MyFirstDistortion::~MyFirstDistortion() {}
@@ -261,73 +257,6 @@ void MyFirstDistortion::OnParamChange(int paramIdx)
       }
       voiceManager.changeAllVoices(changer);
   }
-  /*
-  switch (paramIdx)
-  {
-    case kGain:
-      mGain = exp(GetParam(kGain)->Value() / 10); // 10 * log(ratio) = dB Change
-      break;
-
-    case mWaveform:
-        mOscillator.setMode(static_cast<OscillatorMode>(GetParam(mWaveform)->Int()));
-        break;
-
-    case mAttack: //2
-    case mDecay: //3
-    case mSustain: //4
-    case mRelease: //5
-        mEnvelopeGenerator.setStageValue(static_cast<EnvelopeGenerator::EnvelopeStage>(paramIdx), GetParam(paramIdx)->Value());
-        break;
-
-    case mFilterCutoff:
-        mFilter.setCutoff(GetParam(paramIdx)->Value());
-        break;
-    case mFilterResonance:
-        mFilter.setResonance(GetParam(paramIdx)->Value());
-        break;
-    case mFilterMode:
-        mFilter.setFilterMode(static_cast<Filter::FilterMode>(GetParam(paramIdx)->Int()));
-        break;
-
-    case mFilterAttack:
-        mFilterEnvelopeGenerator.setStageValue(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK, GetParam(paramIdx)->Value());
-        break;
-    case mFilterDecay:
-        mFilterEnvelopeGenerator.setStageValue(EnvelopeGenerator::ENVELOPE_STAGE_DECAY, GetParam(paramIdx)->Value());
-        break;
-    case mFilterSustain:
-        mFilterEnvelopeGenerator.setStageValue(EnvelopeGenerator::ENVELOPE_STAGE_SUSTAIN, GetParam(paramIdx)->Value());
-        break;
-    case mFilterRelease:
-        mFilterEnvelopeGenerator.setStageValue(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE, GetParam(paramIdx)->Value());
-        break;
-    case mFilterEnvelopeAmount:
-        filterEnvelopeAmount = GetParam(paramIdx)->Value();
-        break;
-
-    case mLFOWaveform:
-        voiceManager.setLFOMode(static_cast<Oscillator::OscillatorMode>(param->Int()));
-        break;
-
-    case mLFOFreq:
-        voiceManager.setLFOFrequency(param->Value());
-        break;
-
-    case mlfoFilterModAmount:
-        lfoFilterModAmount = GetParam(paramIdx)->Value();
-        /*
-        if (lfoFilterModAmount == 0) {
-            mLFO.setMuted(true);
-        }
-        else {
-            mLFO.setMuted(false);
-        }
-        *-/
-
-    default:
-        break;
-  }
-  */
 }
 
 
