@@ -89,7 +89,7 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
   GetParam(mFilterEnvelopeAmount)->InitDouble("Filter Env Amount", 0.0, -1.0, 1.0, 0.001);
 
   GetParam(mLFOWaveform)->InitEnum("LFO Waveform", Oscillator::OSCILLATOR_MODE_SINE, 5);
-  GetParam(mLFOFreq)->InitDouble("LFO Frequency", 6.0, 0.01, 30.0, 0.001);
+  GetParam(mLFOFreq)->InitDouble("LFO Frequency", 6.0, 0.01, 30.0, 0.001, "Hz");
   GetParam(mlfoFilterModAmount)->InitDouble("LFO Filter Mod Amount", 0.0, 0.00, 1.0, 0.001);
 
   GetParam(mPitchMod)->InitDouble("Pitch Mod", 0.0, 0.00, 1.0, 0.001);
@@ -129,7 +129,10 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
   mVirtualKeyboard = new IKeyboardControl(this, kKeybX, kKeybY, virtualKeyboardMinimumNoteNumber, /* octaves: */ 5, &whiteKeyImage, &blackKeyImage, keyCoordinates);
   pGraphics->AttachControl(mVirtualKeyboard);
 
+  IText textStyle = IText();
   pGraphics->AttachControl(new IKnobMultiControl(this, 330, 156, kGain, &gKnob));
+                                                                  //l, t, r, b: big knobs are 59 pixels, smalss are 36
+  pGraphics->AttachControl(new ICaptionControl(this, IRECT(330, 166, 390, 176), kGain, &textStyle));
 
   pGraphics->AttachControl(new ISwitchControl(this, 85, 82, mWaveform, &waveSwitchMap));
 
@@ -138,9 +141,17 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
   pGraphics->AttachControl(new IKnobMultiControl(this, 178, 174, mSustain, &sKnob));
   pGraphics->AttachControl(new IKnobMultiControl(this, 234, 174, mRelease, &rKnob));
 
+  pGraphics->AttachControl(new ICaptionControl(this, IRECT(72, 174, 72+36, 184), mAttack, &textStyle));
+  pGraphics->AttachControl(new ICaptionControl(this, IRECT(124, 174, 124+36, 184), mDecay, &textStyle));
+  pGraphics->AttachControl(new ICaptionControl(this, IRECT(178, 174, 178+36, 184), mSustain, &textStyle));
+  pGraphics->AttachControl(new ICaptionControl(this, IRECT(234, 174, 234+36, 184), mRelease, &textStyle));
+
   pGraphics->AttachControl(new ISwitchControl(this, 246, 401, mFilterMode, &filtermodeBitmap));
   pGraphics->AttachControl(new IKnobMultiControl(this, 165, 346, mFilterCutoff, &cutKnob));
   pGraphics->AttachControl(new IKnobMultiControl(this, 165, 413, mFilterResonance, &resKnob));
+
+  pGraphics->AttachControl(new ICaptionControl(this, IRECT(165, 346, 165+59, 356), mFilterCutoff, &textStyle)); // TODO give this a hz label (need some math for this)
+  pGraphics->AttachControl(new ICaptionControl(this, IRECT(165, 413, 165+59, 423), mFilterResonance, &textStyle));
 
 
   pGraphics->AttachControl(new IKnobMultiControl(this, 190, 485, mFilterAttack, &aKnob));
@@ -149,11 +160,23 @@ MyFirstDistortion::MyFirstDistortion(IPlugInstanceInfo instanceInfo)
   pGraphics->AttachControl(new IKnobMultiControl(this, 351, 485, mFilterRelease, &rKnob));
   pGraphics->AttachControl(new IKnobMultiControl(this, 328, 567, mFilterEnvelopeAmount, &envKnob));
 
+  pGraphics->AttachControl(new ICaptionControl(this, IRECT(190, 485, 190+36, 495), mFilterAttack, &textStyle));
+  pGraphics->AttachControl(new ICaptionControl(this, IRECT(240, 485, 240+36, 495), mFilterDecay, &textStyle));
+  pGraphics->AttachControl(new ICaptionControl(this, IRECT(295, 485, 295+36, 495), mFilterSustain, &textStyle));
+  pGraphics->AttachControl(new ICaptionControl(this, IRECT(351, 485, 351+36, 495), mFilterRelease, &textStyle));
+  pGraphics->AttachControl(new ICaptionControl(this, IRECT(328, 567, 328+59, 577), mFilterEnvelopeAmount, &textStyle));
+
   pGraphics->AttachControl(new ISwitchControl(this, 43, 643, mLFOWaveform, &lfowaveSwitchMap));
   pGraphics->AttachControl(new IKnobMultiControl(this, 240, 637, mLFOFreq, &freqKnob));
   pGraphics->AttachControl(new IKnobMultiControl(this, 118, 567, mlfoFilterModAmount, &lfoKnob));
 
+  pGraphics->AttachControl(new ICaptionControl(this, IRECT(240, 637, 240+59, 647), mLFOFreq, &textStyle));
+  pGraphics->AttachControl(new ICaptionControl(this, IRECT(118, 567, 118+59, 577), mlfoFilterModAmount, &textStyle));
+
+
   pGraphics->AttachControl(new IKnobMultiControl(this, 262, 75, mPitchMod, &pmKnob));
+
+  pGraphics->AttachControl(new ICaptionControl(this, IRECT(262, 75, 262+59, 85), mPitchMod, &textStyle));
 
   AttachGraphics(pGraphics);
 

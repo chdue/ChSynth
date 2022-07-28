@@ -54,7 +54,7 @@ public:
 		voice.setFilterLFOAmount(amount);
 	}
 private:
-	static const int NumberOfVoices = 64;
+	static const int NumberOfVoices = 32;
 	Voice voices[NumberOfVoices];
 	Oscillator mLFO;
 	Voice* findFreeVoice();
